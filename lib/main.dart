@@ -31,33 +31,47 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   double _counter = 0;
+  double tapstr = 1;
+  double pasprof = 0;
+  double lvlprice = 1000;
 
   void _incrementCounter() {
     setState(() {
-      _counter++;
+      _counter+= tapstr;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ignore: prefer_const_constructors
-      backgroundColor: Color(0xFF07223C),
+      backgroundColor: const Color(0xFF07223C),
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            // Добавляем меню сверху
+            const SizedBox(height: 20),  // Отступ сверху
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildMenuCard('Earn per tap', '+$tapstr', 'assets/image/nancoin.png', Colors.orange, 150),
+                _buildMenuCard('Coins to level up', '$lvlprice', 'assets/image/nancoin.png', Colors.blue, 150),
+                _buildMenuCard('Profit per hour', '+$pasprof', 'assets/image/nancoin.png', Colors.green, 150),
+              ],
+            ),
+            const SizedBox(height: 40),  // Отступ между меню и текстом счётчика
+            
+            // Текст с счётчиком и иконкой
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   '$_counter',
-                  // ignore: prefer_const_constructors
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 50.0,  
                     fontWeight: FontWeight.bold,  
                     color: Colors.white,  
@@ -72,6 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             const SizedBox(height: 20),
+            
+            // Кнопка в виде круга
             SizedBox(
               width: 200.0,
               height: 200.0,
@@ -88,6 +104,42 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildMenuCard(String title, String value, String iconPath, Color color, double width) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      width: width,
+      decoration: BoxDecoration(
+        color: Colors.blueGrey[800],
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: TextStyle(color: color, fontSize: 14),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                value,
+                style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(width: 2.5),
+              Image.asset(
+                iconPath,
+                width: 20,
+                height: 20,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
