@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(width: 10),  
                 Image.asset(
-                  'assets/image/coin.png',  
+                  'assets/image/nancoin.png',  
                   width: 50.0,  
                   height: 50.0,
                 ),
