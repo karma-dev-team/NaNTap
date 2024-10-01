@@ -49,61 +49,80 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            // Info Menu
-            const SizedBox(height: 20),  
-            Row(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Размещаем элементы с учетом нижнего меню
+        children: <Widget>[
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              // Info Menu
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildMenuCard('Earn per tap', '+$tapstr', 'assets/image/coin.png', Colors.orange, 150),
+                  _buildMenuCard('Coins to level up', '$lvlprice', 'assets/image/coin.png', Colors.blue, 150),
+                  _buildMenuCard('Profit per hour', '+$pasprof', 'assets/image/coin.png', Colors.green, 150),
+                ],
+              ),
+              const SizedBox(height: 40),
+              
+              // Coin counter
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$_counter',
+                    style: const TextStyle(
+                      fontSize: 50.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Image.asset(
+                    'assets/image/coin.png',
+                    width: 50.0,
+                    height: 50.0,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              
+              // Tap tap tap
+              SizedBox(
+                width: 200.0,
+                height: 200.0,
+                child: FloatingActionButton(
+                  onPressed: _incrementCounter,
+                  tooltip: '',
+                  backgroundColor: Colors.orange,
+                  elevation: 5.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100.0),
+                  ),
+                  child: Image.asset('assets/image/clicker_logo.png'),
+                ),
+              ),
+            ],
+          ),
+          
+          // Fotter Menu
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            color: Colors.blueGrey[800],
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildMenuCard('Earn per tap', '+$tapstr', 'assets/image/coin.png', Colors.orange, 150),
-                _buildMenuCard('Coins to level up', '$lvlprice', 'assets/image/coin.png', Colors.blue, 150),
-                _buildMenuCard('Profit per hour', '+$pasprof', 'assets/image/coin.png', Colors.green, 150),
+                _buildBottomMenuItem('Домой', Icons.home, Colors.orange, true),
+                _buildBottomMenuItem('Улучшения', "assets/image/uparrow.png", Colors.white, false),
+                _buildBottomMenuItem('Рынок', Icons.shopping_basket, Colors.white, false),
+                _buildBottomMenuItem('Друзья', Icons.people, Colors.white, false),
+                _buildBottomMenuItem('Профиль', Icons.account_circle, Colors.white, false),
               ],
             ),
-            const SizedBox(height: 40),  
-            
-            // Coin counter
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$_counter',
-                  style: const TextStyle(
-                    fontSize: 50.0,  
-                    fontWeight: FontWeight.bold,  
-                    color: Colors.white,  
-                  ),
-                ),
-                const SizedBox(width: 10),  
-                Image.asset(
-                  'assets/image/coin.png',  
-                  width: 50.0,  
-                  height: 50.0,
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            
-            // Tap tap tap
-            SizedBox(
-              width: 200.0,
-              height: 200.0,
-              child: FloatingActionButton(
-                onPressed: _incrementCounter,
-                tooltip: '',
-                backgroundColor: Colors.orange,
-                elevation: 5.0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100.0),
-                ),
-                child: Image.asset('assets/image/clicker_logo.png'),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -142,6 +161,42 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
+    );
+  }
+
+  // Podval Builder 228
+  Widget _buildBottomMenuItem(String title, icon, Color iconColor, bool isActive) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: isActive ? Colors.blueGrey[700] : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: icon is IconData
+            ? Icon(
+                icon,
+                color: iconColor,
+                size: 30,
+              )
+            : Image.asset(
+                icon,
+                width: 30,
+                height: 30,
+              ),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          title,
+          // ignore: prefer_const_constructors
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+          ),
+        ),
+      ],
     );
   }
 }
