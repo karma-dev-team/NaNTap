@@ -53,8 +53,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            // Добавляем меню сверху
-            const SizedBox(height: 20),  // Отступ сверху
+            // Info Menu
+            const SizedBox(height: 20),  
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -63,9 +63,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 _buildMenuCard('Profit per hour', '+$pasprof', 'assets/image/nancoin.png', Colors.green, 150),
               ],
             ),
-            const SizedBox(height: 40),  // Отступ между меню и текстом счётчика
+            const SizedBox(height: 40),  
             
-            // Текст с счётчиком и иконкой
+            // Coin counter
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -87,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(height: 20),
             
-            // Кнопка в виде круга
+            // Tap tap tap
             SizedBox(
               width: 200.0,
               height: 200.0,
@@ -108,6 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  // info card builder
   Widget _buildMenuCard(String title, String value, String iconPath, Color color, double width) {
     return Container(
       padding: const EdgeInsets.all(10),
