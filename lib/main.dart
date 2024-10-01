@@ -58,9 +58,9 @@ class _MyHomePageState extends State<MyHomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildMenuCard('Earn per tap', '+$tapstr', 'assets/image/nancoin.png', Colors.orange, 150),
-                _buildMenuCard('Coins to level up', '$lvlprice', 'assets/image/nancoin.png', Colors.blue, 150),
-                _buildMenuCard('Profit per hour', '+$pasprof', 'assets/image/nancoin.png', Colors.green, 150),
+                _buildMenuCard('Earn per tap', '+$tapstr', 'assets/image/coin.png', Colors.orange, 150),
+                _buildMenuCard('Coins to level up', '$lvlprice', 'assets/image/coin.png', Colors.blue, 150),
+                _buildMenuCard('Profit per hour', '+$pasprof', 'assets/image/coin.png', Colors.green, 150),
               ],
             ),
             const SizedBox(height: 40),  
@@ -79,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(width: 10),  
                 Image.asset(
-                  'assets/image/nancoin.png',  
+                  'assets/image/coin.png',  
                   width: 50.0,  
                   height: 50.0,
                 ),
