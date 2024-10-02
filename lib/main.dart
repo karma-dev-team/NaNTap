@@ -38,6 +38,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void _incrementCounter() {
     setState(() {
       _counter+= tapstr;
+
+      if (_counter >= lvlprice) {
+        lvlprice+= (lvlprice*1.5).toInt();
+        tapstr+=1;
+        _counter = _counter - lvlprice;
+      }
     });
   }
 
@@ -60,9 +66,9 @@ class _MyHomePageState extends State<MyHomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildMenuCard('Earn per tap', '+$tapstr', 'assets/image/coin.png', Colors.orange, 150),
-                  _buildMenuCard('Coins to level up', '$lvlprice', 'assets/image/coin.png', Colors.blue, 150),
-                  _buildMenuCard('Profit per hour', '+$pasprof', 'assets/image/coin.png', Colors.green, 150),
+                  _buildMenuCard('Earn per tap', '+$tapstr', 'assets/image/coin.png', Colors.orange, 120),
+                  _buildMenuCard('Coins to level up', '$lvlprice', 'assets/image/coin.png', Colors.blue, 120),
+                  _buildMenuCard('Profit per hour', '+$pasprof', 'assets/image/coin.png', Colors.green, 120),
                 ],
               ),
               const SizedBox(height: 40),
@@ -89,6 +95,48 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               const SizedBox(height: 20),
               
+              // Goal
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    // ignore: prefer_const_constructors
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      // ignore: prefer_const_literals_to_create_immutables
+                      children: [
+                        const Text(
+                          'Следующая цель',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        // ignore: prefer_const_constructors
+                        Icon(
+                          Icons.info_outline,
+                          color: Colors.grey,
+                          size: 18,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    LinearProgressIndicator(
+                      value: _counter / lvlprice, // Прогресс
+                      backgroundColor: Colors.blueGrey[700], // Цвет заднего фона
+                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.orange), // Цвет заполненной части
+                      minHeight: 10.0, // Высота полоски
+                    ),
+                  ],
+                ),
+              ),
+
+
+
+              const SizedBox(height: 20),
+
               // Tap tap tap
               SizedBox(
                 width: 200.0,
