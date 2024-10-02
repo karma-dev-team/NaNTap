@@ -40,9 +40,9 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter+= tapstr;
 
       if (_counter >= lvlprice) {
+        _counter = _counter - lvlprice;
         lvlprice+= (lvlprice*1.5).toInt();
         tapstr+=1;
-        _counter = _counter - lvlprice;
       }
     });
   }
