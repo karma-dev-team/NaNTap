@@ -92,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   _buildMenuCard('Earn per tap', '+$tapstr', 'assets/image/coin.png', Colors.orange, 120),
                   _buildMenuCard('Coins to level up', '$lvlprice', 'assets/image/coin.png', Colors.blue, 120),
-                  _buildMenuCard('Profit per hour', '+$pasprof', 'assets/image/coin.png', Colors.green, 120),
+                  _buildMenuCard('Profit per second', '+$pasprof', 'assets/image/coin.png', Colors.green, 120),
                 ],
               ),
               const SizedBox(height: 40),
