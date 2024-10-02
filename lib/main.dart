@@ -39,10 +39,20 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _counter+= tapstr;
 
-      if (_counter >= lvlprice) {
-        _counter = _counter - lvlprice;
-        lvlprice+= (lvlprice*1.5).toInt();
-        tapstr+=1;
+      
+      if (tapstr < 10) {
+        if (_counter >= lvlprice) {
+          _counter = _counter - lvlprice;
+          lvlprice+= (lvlprice*1.5).toInt();
+          tapstr+=1;
+        }
+      }
+      if (tapstr >= 10) {
+        if (_counter >= lvlprice) {
+          _counter = _counter - lvlprice;
+          lvlprice+= (lvlprice*1.5).toInt();
+          tapstr+=2;
+        }
       }
     });
   }
