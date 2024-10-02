@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _passiveIncome?.cancel(); // Отменяем предыдущий таймер, если он был
     _passiveIncome = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        _counter += pasprof; // Добавляем пассивный доход каждую секунду
+        _counter += pasprof;
       });
     });
   }
