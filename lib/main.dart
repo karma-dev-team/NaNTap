@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 void main() {
   runApp(const MyApp());
@@ -34,26 +35,39 @@ class _MyHomePageState extends State<MyHomePage> {
   double tapstr = 1;
   double pasprof = 0;
   double lvlprice = 100;
+  int curlvl = 1;
+  Timer? _passiveIncome;
 
   void _incrementCounter() {
     setState(() {
       _counter+= tapstr;
 
       
-      if (tapstr < 10) {
-        if (_counter >= lvlprice) {
-          _counter = _counter - lvlprice;
-          lvlprice+= (lvlprice*1.5).toInt();
-          tapstr+=1;
+      if (_counter >= lvlprice) {
+        _counter -= lvlprice;
+        lvlprice += (lvlprice * 1.5).toInt();
+        curlvl++;
+
+        if (curlvl % 5 == 0) {
+          pasprof += 1;  
+          _startPassiveIncomeTimer();  
+        }
+
+        if (tapstr < 10) {
+          tapstr += 1;  
+        } else {
+          tapstr += 2;  
         }
       }
-      if (tapstr >= 10) {
-        if (_counter >= lvlprice) {
-          _counter = _counter - lvlprice;
-          lvlprice+= (lvlprice*1.5).toInt();
-          tapstr+=2;
-        }
-      }
+    });
+  }
+
+  void _startPassiveIncomeTimer() {
+    _passiveIncome?.cancel(); // Отменяем предыдущий таймер, если он был
+    _passiveIncome = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _counter += pasprof; // Добавляем пассивный доход каждую секунду
+      });
     });
   }
 
