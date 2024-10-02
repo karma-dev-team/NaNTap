@@ -33,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   double _counter = 0;
   double tapstr = 1;
   double pasprof = 0;
-  double lvlprice = 1000;
+  double lvlprice = 100;
 
   void _incrementCounter() {
     setState(() {
