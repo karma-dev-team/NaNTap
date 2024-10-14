@@ -12,3 +12,8 @@ abstract class AbstractAchievmentManager {
 abstract class AbstractAchievment { 
   
 }
+
+abstract class AbstractWallet { 
+  void increase(double amount); 
+  void decrease(double amount); 
+}

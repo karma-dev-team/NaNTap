@@ -5,7 +5,7 @@ import 'package:nantap/progress/interfaces.dart';
 //   List<AbstractAchievment> 
 
 //   void addAchievmentWithClass(AbstractAchievment achiv) { 
-    
+
 //   }
 
 //   void addAchievment(String triggerName, String displayName) { 

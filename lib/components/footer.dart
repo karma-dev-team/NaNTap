@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Footer extends StatelessWidget {
-  final Function(String) onMenuItemTapped;
-
-  const Footer({Key? key, required this.onMenuItemTapped}) : super(key: key);
+  const Footer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,20 +11,56 @@ class Footer extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildBottomMenuItem('Домой', Icons.home, Colors.orange, true),
-          _buildBottomMenuItem('Улучшения', "assets/image/uparrow.png", Colors.white, false),
-          _buildBottomMenuItem('Рынок', Icons.shopping_basket, Colors.white, false),
-          _buildBottomMenuItem('Друзья', Icons.people, Colors.white, false),
-          _buildBottomMenuItem('Профиль', Icons.account_circle, Colors.white, false),
+          _buildBottomMenuItem(
+            context,
+            'Домой',
+            Icons.home,
+            Colors.orange,
+            true,
+            '/', // Маршрут для домашней страницы
+          ),
+          _buildBottomMenuItem(
+            context,
+            'Улучшения',
+            "assets/image/uparrow.png",
+            Colors.white,
+            false,
+            '/upgrades', // Маршрут для страницы улучшений
+          ),
+          _buildBottomMenuItem(
+            context,
+            'Рынок',
+            Icons.shopping_basket,
+            Colors.white,
+            false,
+            '/market', // Маршрут для страницы рынка
+          ),
+          _buildBottomMenuItem(
+            context,
+            'Друзья',
+            Icons.people,
+            Colors.white,
+            false,
+            '/friends', // Маршрут для страницы друзей
+          ),
+          _buildBottomMenuItem(
+            context,
+            'Профиль',
+            Icons.account_circle,
+            Colors.white,
+            false,
+            '/profile', // Маршрут для страницы профиля
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildBottomMenuItem(String title, icon, Color iconColor, bool isActive) {
+  Widget _buildBottomMenuItem(BuildContext context, String title, icon, Color iconColor, bool isActive, String route) {
     return GestureDetector(
       onTap: () {
-        onMenuItemTapped(title);
+        // Переход на указанный маршрут при нажатии
+        Navigator.pushNamed(context, route);
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
