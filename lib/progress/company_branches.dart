@@ -1,10 +1,11 @@
 import 'package:nantap/progress/interfaces.dart';
 import 'package:nantap/progress/upgrade.dart';
 
-class CompanyBranches extends MoneyEarner { 
+class CompanyBranches implements MoneyEarner { 
   List<Upgrade> upgrades = []; 
 
-  double collectMoney() { 
+  @override
+  double breadEarned() { 
     return 0; 
   }
 }

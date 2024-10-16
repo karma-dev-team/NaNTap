@@ -24,7 +24,7 @@ abstract class AbstractStorage {
 }
 
 abstract class MoneyEarner { 
-  double collectMoney();
+  double breadEarned();
 }
 
 abstract class AbstractWallet { 

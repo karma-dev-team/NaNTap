@@ -2,17 +2,20 @@ import 'package:nantap/progress/company_branches.dart';
 import 'package:nantap/progress/interfaces.dart';
 import 'package:nantap/progress/upgrade.dart';
 
-class Company extends MoneyEarner { 
+class Company implements MoneyEarner { 
   List<Upgrade> upgrades = []; 
   // филиалы компании
   List<CompanyBranches> branches = []; 
 
-  double collectMoney() { 
+  @override
+  double breadEarned() { 
     double result = 0; 
 
-    for (var upgrade in this.upgrades)
+    for (var branch in branches) { 
+      result += branch.breadEarned(); 
+    }
 
-    for (var upgrade in this.upgrades) { 
+    for (var upgrade in upgrades) { 
       result += upgrade.earn(); 
     }
 
