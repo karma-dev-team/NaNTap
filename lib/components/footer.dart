@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class Footer extends StatelessWidget {
-  const Footer({Key? key}) : super(key: key);
+  final int selectedIndex;
+  final ValueChanged<int> onItemTapped;
+
+  const Footer({
+    Key? key,
+    required this.selectedIndex,
+    required this.onItemTapped,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,51 +23,51 @@ class Footer extends StatelessWidget {
             'Домой',
             Icons.home,
             Colors.orange,
-            true,
-            '/', // Маршрут для домашней страницы
+            selectedIndex == 0,
+            0, // Индекс для домашней страницы
           ),
           _buildBottomMenuItem(
             context,
             'Улучшения',
             "assets/image/uparrow.png",
             Colors.white,
-            false,
-            '/upgrades', // Маршрут для страницы улучшений
+            selectedIndex == 1,
+            1, // Индекс для страницы улучшений
           ),
           _buildBottomMenuItem(
             context,
             'Рынок',
             Icons.shopping_basket,
             Colors.white,
-            false,
-            '/market', // Маршрут для страницы рынка
+            selectedIndex == 2,
+            2, // Индекс для страницы рынка
           ),
           _buildBottomMenuItem(
             context,
             'Друзья',
             Icons.people,
             Colors.white,
-            false,
-            '/friends', // Маршрут для страницы друзей
+            selectedIndex == 3,
+            3, // Индекс для страницы друзей
           ),
           _buildBottomMenuItem(
             context,
             'Профиль',
             Icons.account_circle,
             Colors.white,
-            false,
-            '/profile', // Маршрут для страницы профиля
+            selectedIndex == 4,
+            4, // Индекс для страницы профиля
           ),
         ],
       ),
     );
   }
 
-  Widget _buildBottomMenuItem(BuildContext context, String title, icon, Color iconColor, bool isActive, String route) {
+  Widget _buildBottomMenuItem(BuildContext context, String title, icon, Color iconColor, bool isActive, int index) {
     return GestureDetector(
       onTap: () {
-        // Переход на указанный маршрут при нажатии
-        Navigator.pushNamed(context, route);
+        // Передаем индекс в родительский виджет
+        onItemTapped(index);
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,

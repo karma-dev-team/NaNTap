@@ -136,7 +136,6 @@ class _MyHomePageState extends State<MyHomePage> {
               Tapper(onTap: _incrementCounter),
             ],
           ),
-          const Footer(),
         ],
       ),
     );
