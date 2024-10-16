@@ -22,7 +22,7 @@ class Footer extends StatelessWidget {
             context,
             'Домой',
             Icons.home,
-            Colors.orange,
+            selectedIndex == 0 ? Colors.orange : Colors.white,
             selectedIndex == 0,
             0, // Индекс для домашней страницы
           ),
@@ -30,7 +30,7 @@ class Footer extends StatelessWidget {
             context,
             'Улучшения',
             "assets/image/uparrow.png",
-            Colors.white,
+            selectedIndex == 1 ? Colors.orange : Colors.white,
             selectedIndex == 1,
             1, // Индекс для страницы улучшений
           ),
@@ -38,7 +38,7 @@ class Footer extends StatelessWidget {
             context,
             'Рынок',
             Icons.shopping_basket,
-            Colors.white,
+            selectedIndex == 2 ? Colors.orange : Colors.white,
             selectedIndex == 2,
             2, // Индекс для страницы рынка
           ),
@@ -46,7 +46,7 @@ class Footer extends StatelessWidget {
             context,
             'Друзья',
             Icons.people,
-            Colors.white,
+            selectedIndex == 3 ? Colors.orange : Colors.white,
             selectedIndex == 3,
             3, // Индекс для страницы друзей
           ),
@@ -54,7 +54,7 @@ class Footer extends StatelessWidget {
             context,
             'Профиль',
             Icons.account_circle,
-            Colors.white,
+            selectedIndex == 4 ? Colors.orange : Colors.white,
             selectedIndex == 4,
             4, // Индекс для страницы профиля
           ),
