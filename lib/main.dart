@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:nantap/pages/acievments.dart';
 import 'package:nantap/pages/bazar.dart';
@@ -7,7 +8,17 @@ import 'package:nantap/pages/profile.dart';
 import 'package:nantap/pages/statistics.dart';
 import 'package:nantap/pages/upgrades.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    name: 'SecondaryApp',
+    options: const FirebaseOptions(
+      apiKey: '...',
+      appId: '...',
+      messagingSenderId: '...',
+      projectId: '...',
+    )
+  ); // Инициализация Firebase
   runApp(const MyApp());
 }
 
