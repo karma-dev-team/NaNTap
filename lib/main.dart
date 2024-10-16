@@ -9,10 +9,12 @@ import 'package:nantap/pages/upgrades.dart';
 import 'package:nantap/components/footer.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   _MyAppState createState() => _MyAppState();
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class MyApp extends StatefulWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'NanTap',),
+      home: const MyHomePage(title: 'NanTap',),
     );
   }
 }
@@ -29,12 +31,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
 
-  static List<Widget> _pages = <Widget>[
-    MyHomePage(title: 'NanTap'),
-    UpgradesPage(tapStr: '0', lvlPrice: '0', pasProf: '0',),
-    MarketPage(),
-    FriendsPage(),
-    ProfilePage(),
+  static final List<Widget> _pages = <Widget>[
+    const MyHomePage(title: 'NanTap'),
+    const UpgradesPage(tapStr: '0', lvlPrice: '0', pasProf: '0',),
+    const MarketPage(),
+    const FriendsPage(),
+    const ProfilePage(),
   ];
 
   void _onItemTapped(int index) {

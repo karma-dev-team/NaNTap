@@ -8,11 +8,11 @@ class UpgradesPage extends StatefulWidget {
   final String pasProf;
 
   const UpgradesPage({
-    Key? key,
+    super.key,
     required this.tapStr,
     required this.lvlPrice,
     required this.pasProf,
-  }) : super(key: key);
+  });
 
   @override
   _UpgradesPageState createState() => _UpgradesPageState();

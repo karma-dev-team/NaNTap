@@ -1,4 +1,3 @@
-import 'package:nantap/progress/interfaces.dart';
 
 
 // class AchievmentManager extends AbstractAchievmentManager { 

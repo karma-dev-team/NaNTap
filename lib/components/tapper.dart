@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Tapper extends StatelessWidget {
   final VoidCallback onTap;
 
-  const Tapper({Key? key, required this.onTap}) : super(key: key);
+  const Tapper({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

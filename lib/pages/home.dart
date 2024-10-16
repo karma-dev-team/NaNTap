@@ -1,7 +1,7 @@
 import 'package:nantap/components/cardBuilder.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:nantap/components/footer.dart';
+
 import 'package:nantap/components/tapper.dart';
 
 class MyHomePage extends StatefulWidget {
