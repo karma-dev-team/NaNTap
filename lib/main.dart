@@ -15,6 +15,15 @@ void main() {
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Navigation Example',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MyHomePage(title: 'NanTap',),
+    );
+  }
 }
 
 class _MyAppState extends State<MyApp> {
@@ -22,7 +31,7 @@ class _MyAppState extends State<MyApp> {
 
   static List<Widget> _pages = <Widget>[
     MyHomePage(title: 'NanTap'),
-    UpgradesPage(),
+    UpgradesPage(tapStr: '0', lvlPrice: '0', pasProf: '0',),
     MarketPage(),
     FriendsPage(),
     ProfilePage(),

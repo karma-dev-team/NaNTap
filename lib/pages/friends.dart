@@ -6,8 +6,10 @@ class FriendsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF07223C),
       appBar: AppBar(
-        title: const Text("Пригласите друзей!"),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('Friends'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -19,6 +21,7 @@ class FriendsPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
+                color: Colors.white70,
               ),
             ),
             const SizedBox(height: 20),
@@ -45,7 +48,7 @@ class FriendsPage extends StatelessWidget {
                       backgroundColor: Colors.deepPurple, // цвет кнопки
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     ),
-                    child: const Text('Получить реферальную ссылку'),
+                    child: const Text('Получить реферальную ссылку', style: TextStyle(color: Colors.white70,)),
                   ),
                 ],
               ),
@@ -58,7 +61,7 @@ class FriendsPage extends StatelessWidget {
               children: [
                 const Text(
                   'Список ваших друзей',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white70,),
                 ),
                 IconButton(
                   icon: const Icon(Icons.refresh),
@@ -132,7 +135,7 @@ class FriendTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.person, size: 36, color: Colors.black),
-      title: Text(name),
+      title: Text(name, style: TextStyle(color: Colors.white70,),),
       onTap: () {
         // Заглушка для нажатия на друга
         print('Открыть профиль $name');

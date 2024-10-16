@@ -8,13 +8,15 @@ class MarketPage extends StatelessWidget {
     // final gameData = Provider.of<GameData>(context);
 
     return Scaffold(
+      backgroundColor: const Color(0xFF07223C),
       appBar: AppBar(
-        title: const Text("Market Page"),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('Market'),
       ),
       body: const Center(
         child: Text(
           "Market data goes here",
-          style: TextStyle(fontSize: 24),
+          style: TextStyle(fontSize: 24, color: Colors.white70),
         ),
       ),
     );
