@@ -6,7 +6,7 @@ Widget buildMenuCard(String title, String value, String iconPath, Color color, d
     padding: const EdgeInsets.all(10),
     width: width,
     decoration: BoxDecoration(
-      color: Colors.blueGrey[800],
+      color: const Color(0xFF1D466C),
       borderRadius: BorderRadius.circular(15),
     ),
     child: Column(
