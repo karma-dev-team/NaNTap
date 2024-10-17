@@ -1,6 +1,8 @@
 import 'dart:ffi';
 
+import 'package:nantap/pages/acievments.dart';
 import 'package:nantap/progress/company.dart';
+import 'package:nantap/progress/interfaces.dart';
 import 'package:nantap/progress/upgrade.dart';
 
 class GlobalState { 
@@ -9,6 +11,7 @@ class GlobalState {
   List<Upgrade> upgrades = [];
   // Компании
   List<Company> companies = []; 
+  List<String> achievments = []; 
   
   GlobalState(this.level, this.breadCount, this.upgrades); 
 

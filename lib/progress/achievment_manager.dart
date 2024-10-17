@@ -1,13 +1,21 @@
 
 
-// class AchievmentManager extends AbstractAchievmentManager { 
-//   List<AbstractAchievment> 
+import 'package:nantap/progress/interfaces.dart';
+import 'package:nantap/progress/state.dart';
 
-//   void addAchievmentWithClass(AbstractAchievment achiv) { 
+class AchievmentManager implements AbstractAchievmentManager { 
+  List<AbstractAchievment> globalAchievments = [];  
 
-//   }
+  @override
+  void addAchievment(AbstractAchievment achiv) { 
 
-//   void addAchievment(String triggerName, String displayName) { 
+  }
 
-//   }
-// }
+  @override
+  void checkState(GlobalState state) { 
+    for (var ach in globalAchievments) { 
+      var activated = ach.check(state); 
+      
+    }
+  }
+}

@@ -8,14 +8,18 @@ abstract class AbstractProgressManager {
 
 abstract class AbstractAchievmentManager { 
   void addAchievment(AbstractAchievment achievment);
+  void checkState(GlobalState state);
 
+} 
 
+abstract class AchievmentScheme { 
+  String getAchievmentId();
+  AbstractAchievment? buildFromSaveData(Map<String, Object> data);  
+  Map<String, Object> export(); 
 }
-
-
-abstract class AbstractAchievment { 
-  AbstractAchievment? buildFromSaveData(Map<String, Object> data);   
-  int? check(GlobalState state);   
+ 
+abstract class AbstractAchievment {  
+  int? check(GlobalState state); 
 }
 
 abstract class AbstractStorage { 
