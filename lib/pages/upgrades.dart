@@ -143,29 +143,11 @@ class _UpgradesPageState extends State<UpgradesPage> {
           children: [
             // Top Stats Row using buildMenuCard
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                buildMenuCard(
-                  'Earn per tap',
-                  '+${widget.tapStr}',
-                  'assets/image/coin.png',
-                  Colors.orange,
-                  120,
-                ),
-                buildMenuCard(
-                  'Coins to level up',
-                  '${widget.lvlPrice}',
-                  'assets/image/coin.png',
-                  Colors.blue,
-                  120,
-                ),
-                buildMenuCard(
-                  'Profit per hour',
-                  '+${widget.pasProf}',
-                  'assets/image/coin.png',
-                  Colors.green,
-                  120,
-                ),
+                buildMenuCard('Earn per tap', '+${widget.tapStr}', 'assets/image/coin.png', Colors.orange, 120),
+                buildMenuCard('Coins to level up', '${widget.lvlPrice}', 'assets/image/coin.png', Colors.blue, 120),
+                buildMenuCard('Profit per second', '+${widget.pasProf}', 'assets/image/coin.png', Colors.green, 120),
               ],
             ),
             const SizedBox(height: 16),
