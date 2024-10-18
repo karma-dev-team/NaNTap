@@ -53,9 +53,9 @@ class FriendsPage extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  const InviteFriendButton(text: 'Пригласите друга', bonus: '+2 За каждого друга', imagePath: 'assets/image/coin.png',),
+                  const InviteFriendButton(text: 'Пригласите друга', bonus: '+2 За друга', imagePath: 'assets/image/coin.png',),
                   const SizedBox(height: 10),
-                  const InviteFriendButton(text: 'Пригласите еще друга', bonus: '+3 За каждого друга', imagePath: 'assets/image/coin.png',),
+                  const InviteFriendButton(text: 'Пригласите еще друга', bonus: '+3 За друга', imagePath: 'assets/image/coin.png',),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {

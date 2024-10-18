@@ -36,6 +36,4 @@ class GlobalState {
 
     return result; 
   }
-
-
 }

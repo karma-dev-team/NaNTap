@@ -20,6 +20,7 @@ abstract class AchievmentScheme {
  
 abstract class AbstractAchievment {  
   int? check(GlobalState state); 
+  String getAchievmentId(); 
 }
 
 abstract class AbstractStorage { 

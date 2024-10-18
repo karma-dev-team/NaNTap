@@ -63,11 +63,11 @@ class _UpgradesPageState extends State<UpgradesPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
-                      style: const TextStyle(color: Colors.white, fontSize: 18),
+                      title.length < 14 ? title : title.substring(0, 10) + "...", 
+                      style: const TextStyle(color: Colors.white, fontSize: 18)
                     ),
                     Text(
-                      'Profit per hour: $profitPerHour',
+                      'В час: \n $profitPerHour',
                       style: const TextStyle(color: Colors.white54, fontSize: 14),
                     ),
                   ],

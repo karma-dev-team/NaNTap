@@ -5,6 +5,9 @@ class ProgressManager implements AbstractProgressManager {
   AbstractWallet wallet; 
   GlobalState state; 
   AbstractStorage storage; 
+  AbstractAchievmentManager achievmentManager; 
 
-  ProgressManager(this.wallet, this.state, this.storage);
+  ProgressManager(this.wallet, this.state, this.storage, this.achievmentManager);
+
+  
 }
