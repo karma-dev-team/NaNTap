@@ -3,11 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:nantap/components/tapper.dart';
+import 'package:nantap/progress/interfaces.dart';
+import 'package:nantap/progress/manager.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
 
   final String title;
+  final AbstractProgressManager manager; 
+
+  const MyHomePage({super.key, required this.manager, required this.title});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -20,6 +24,10 @@ class _MyHomePageState extends State<MyHomePage> {
   double lvlprice = 100;
   int curlvl = 1;
   Timer? _passiveIncome;
+
+  ProgressManager manager; 
+
+  _MyHomePageState(this.manager); 
 
   void _incrementCounter() {
     setState(() {

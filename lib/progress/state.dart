@@ -1,39 +1,87 @@
-import 'dart:ffi';
-
-import 'package:nantap/pages/acievments.dart';
 import 'package:nantap/progress/company.dart';
 import 'package:nantap/progress/interfaces.dart';
 import 'package:nantap/progress/upgrade.dart';
 
-class GlobalState { 
-  int level; 
+class GlobalState implements AbstractWallet {
+  int level;
   double breadCount;
-  List<Upgrade> upgrades = [];
-  // Компании
-  List<Company> companies = []; 
-  List<String> achievments = []; 
-  
-  GlobalState(this.level, this.breadCount, this.upgrades); 
+  int tapStrength = 0; 
+  int lvlPrice = 100; 
+  List<Upgrade> upgrades;
+  List<Company> companies;
+  List<String> achievements;
 
-  void addLevel(int leveltoAdd) { 
-    level += leveltoAdd; 
+  GlobalState(this.level, this.breadCount, this.upgrades, this.companies, this.achievements);
+
+  double getAmount() { 
+    return breadCount; 
   }
 
-  void addBread(double bread) { 
-    breadCount = breadCount + bread; 
+  bool increase(double amount) {
+    breadCount += amount;
+    return true;  
   }
 
-  double calcBread() { 
-    double result = 0;
-
-    for (var upgrade in upgrades) { 
-      result += upgrade.earn(); 
-    } 
-
-    for (var company in companies) { 
-      result += company.breadEarned(); 
+  bool decrease(double amount) { 
+    if (breadCount < amount) { 
+      return false; 
     }
 
-    return result; 
+    breadCount -= amount;
+    return true;  
+  } 
+
+  // Factory constructor to create an instance from JSON
+  factory GlobalState.fromJson(Map<String, dynamic> json) {
+    // Parsing upgrades from JSON
+    var upgradesFromJson = json['upgrades'] as List<dynamic>;
+    List<Upgrade> upgrades = upgradesFromJson.map((upgradeJson) => Upgrade.fromJson(upgradeJson)).toList();
+
+    // Parsing companies from JSON
+    var companiesFromJson = json['companies'] as List<dynamic>;
+    List<Company> companies = companiesFromJson.map((companyJson) => Company.fromJson(companyJson)).toList();
+
+    // Parsing achievements from JSON
+    List<String> achievements = List<String>.from(json['achievements'] ?? []);
+
+    return GlobalState(
+      json['level'] as int,
+      (json['breadCount'] as num).toDouble(),
+      upgrades,
+      companies,
+      achievements,
+    );
+  }
+
+  double nextLevelPrice() => level * lvlPrice * 1.5; 
+
+  void addLevel(int levelToAdd) {
+    level += levelToAdd;
+  }
+  
+  void levelUpUpgrade(String upgradeId, int levels) { 
+    for (var upg in upgrades) { 
+      if (upg.upgradeId == upgradeId) { 
+        upg.level += levels; 
+      }
+    }
+  }
+
+  void addBread(double bread) {
+    breadCount += bread;
+  }
+
+  double calcBread() {
+    double result = 0;
+
+    for (var upgrade in upgrades) {
+      result += upgrade.earn();
+    }
+
+    for (var company in companies) {
+      result += company.breadEarned();
+    }
+
+    return result;
   }
 }

@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "D:/projects/android/NaNTap/linux"
+    "cmake.sourceDirectory": "D:/projects/android/NaNTap/linux",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

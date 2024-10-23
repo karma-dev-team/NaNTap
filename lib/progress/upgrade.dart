@@ -15,37 +15,31 @@ class Upgrade {
 
   @override
   bool operator ==(Object other) =>
-      other is Upgrade && this.upgradeId == other.upgradeId; 
+      other is Upgrade && upgradeId == other.upgradeId; 
   @override 
-  int get hashCode => Object.hash(this.upgradeId, this.displayName);
+  int get hashCode => Object.hash(upgradeId, displayName);
 
   double earn({int booster = 0}) { 
-    return ((this.level * this.baseEarning) + (booster * this.boostedTimes)).toDouble(); 
+    return ((level * baseEarning) + (booster * boostedTimes)).toDouble(); 
   }
 
-  num get levelUpPrice => pow((this.level * this.cost), 1.4); 
+  double get levelUpPrice => pow((level * cost), 1.4).toDouble(); 
 
   void addLevel({int levels = 1}) { 
-    this.level += levels;
+    level += levels;
   }
 
   void buyUpgrade(AbstractWallet wallet, {int quantity = 1}) { 
-    wallet.decrease((quantity * this.level).toDouble()); 
-    this.addLevel(levels: quantity); 
+    wallet.decrease((quantity * level).toDouble()); 
+    addLevel(levels: quantity); 
   }
 
-  static Upgrade? buildFromSaveData(Map<String, Object> data) {  
+  static Upgrade fromJson(Map<String, Object> data) {  
     var upgradeId = data['upgradeId'].toString(); 
     var displayName = data['displayName'].toString(); 
     var description = data['description'].toString(); 
-    var cost = double.tryParse(data['cost'].toString()); 
-    if (cost == null) { 
-      return null; 
-    } // TODO
-    var baseEarning = int.tryParse(data['baseEarning'].toString());  
-    if (baseEarning == null) { 
-      return null; 
-    }
+    var cost = double.parse(data['cost'].toString()); 
+    var baseEarning = int.parse(data['baseEarning'].toString());  
     var upgrade = Upgrade(upgradeId, displayName, description, cost, baseEarning);
 
     return upgrade; 

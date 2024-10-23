@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:nantap/firebase_options.dart';
 import 'package:nantap/pages/acievments.dart';
 import 'package:nantap/pages/bazar.dart';
 import 'package:nantap/pages/friends.dart';
@@ -7,13 +10,28 @@ import 'package:nantap/pages/profile.dart';
 import 'package:nantap/pages/statistics.dart';
 import 'package:nantap/pages/upgrades.dart';
 import 'package:nantap/components/footer.dart';
+import 'package:nantap/progress/achievment_manager.dart';
+import 'package:nantap/progress/interfaces.dart';
+import 'package:nantap/progress/manager.dart';
+import 'package:nantap/progress/storage.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  var storage = SQLiteStorage(); 
+  var achievementManager = AchievmentManager(storage); 
+
+  var progressManager = new ProgressManager(storage, achievementManager); 
+
+  runApp(const MyApp(progressManager: progressManager,));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final AbstractProgressManager progressManager; 
+
+  MyApp({required this.progressManager, super.key});
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -23,7 +41,7 @@ class MyApp extends StatefulWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'NanTap',),
+      home: MyHomePage(title: 'NanTap', manager: progressManager),
     );
   }
 }

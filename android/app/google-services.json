@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "106272095361",
+    "project_id": "nantap-6ca4a",
+    "storage_bucket": "nantap-6ca4a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:106272095361:android:de5302114a9b900f99a180",
+        "android_client_info": {
+          "package_name": "com.nantap.nantap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArDlaAmQ5sNA953La9kZE81x-_FzXg2sI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
