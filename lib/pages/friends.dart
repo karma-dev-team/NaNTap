@@ -6,16 +6,16 @@ class FriendsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF07223C),
+      backgroundColor: const Color(0xFF1D466C),
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text(
           "Друзья",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black),
         ),
       ),
       body: Container(
-        color: const Color(0xFF0A1220), // Тёмный фон
+        color: const Color(0xFF07223C), // Тёмный фон
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,46 +106,61 @@ class FriendsPage extends StatelessWidget {
           ],
         ),
       ),
-       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+bottomNavigationBar: Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+  child: Row(
+    children: [
+      // Кнопка "Пригласить друзей"
+      Expanded(
         child: ElevatedButton(
           onPressed: () {
             // Заглушка для приглашения друзей
             print('Пригласить друзей');
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFF6B00), // Цвет кнопки (оранжевый)
-            padding: const EdgeInsets.symmetric(vertical: 25), // Высота кнопки
+            backgroundColor: const Color(0xFFCD8032), // Цвет кнопки
+            padding: const EdgeInsets.symmetric(vertical: 25),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12), // Скруглённые углы
+              borderRadius: BorderRadius.circular(12),
             ),
-            elevation: 8, // Тень
+            elevation: 8,
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Выравнивание элементов
+            mainAxisAlignment: MainAxisAlignment.center, // Центрирование элементов
             children: [
-              const Row(
-                children: [
-                  Icon(Icons.person_add, color: Colors.white), // Иконка "пригласить друга"
-                  SizedBox(width: 10),
-                  Text(
-                    'Пригласить друзей',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 10.0), // Отступ справа для картинки
-                child: Image.asset(
-                  'assets/image/coin.png',
-                  width: 24,
-                  height: 24,
-              ),
+              const Icon(Icons.person_add, color: Colors.white), // Иконка "пригласить друга"
+              const SizedBox(width: 10),
+              const Text(
+                'Пригласить друзей',
+                style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ],
           ),
         ),
       ),
+      const SizedBox(width: 10), // Промежуток между кнопками
+      // Кнопка "Скопировать"
+      ElevatedButton(
+        onPressed: () {
+          // Заглушка для копирования
+          print('Скопировать ссылку');
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFCD8032), // Цвет кнопки копирования
+          padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20), // Размер кнопки
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 8,
+        ),
+        child: const Icon(Icons.copy, color: Colors.white), // Иконка копирования
+      ),
+    ],
+  ),
+),
+
+
+
     );
   }
 }
