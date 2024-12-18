@@ -25,7 +25,7 @@ void main() async {
 
   var progressManager = new ProgressManager(storage, achievementManager); 
 
-  runApp(const MyApp(progressManager: progressManager,));
+  runApp(MyApp(progressManager: progressManager,));
 }
 
 class MyApp extends StatefulWidget {
@@ -34,7 +34,7 @@ class MyApp extends StatefulWidget {
   MyApp({required this.progressManager, super.key});
 
   @override
-  _MyAppState createState() => _MyAppState();
+  _MyAppState createState() => _MyAppState(progressManager);
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Navigation Example',
@@ -49,8 +49,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
 
-  static final List<Widget> _pages = <Widget>[
-    const MyHomePage(title: 'NanTap'),
+  ProgressManager manager; 
+
+  _MyAppState(this.manager)
+
+  List<Widget> _pages = <Widget>[
+    MyHomePage(title: 'NanTap', manager: manager),
     const UpgradesPage(tapStr: '0', lvlPrice: '0', pasProf: '0',),
     const MarketPage(),
     const FriendsPage(),
