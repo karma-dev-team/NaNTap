@@ -15,6 +15,11 @@ class UpgradesRegistry implements AbstractUpgradesRegistry {
   }
 
   @override
+  Set<Upgrade> getUpgrades() {
+    return upgrades;
+  }
+
+  @override
   bool checkUpgrade(String upgradeId) {
     // Check if the upgrade exists in the registry
     return upgrades.any((upgrade) => upgrade.upgradeId == upgradeId);

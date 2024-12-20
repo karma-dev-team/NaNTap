@@ -1,85 +1,90 @@
 import 'package:flutter/material.dart';
-import 'package:nantap/components/cardBuilder.dart';
+import 'package:nantap/progress/interfaces.dart';
+import 'package:nantap/progress/upgrade.dart';
 
 class UpgradesPage extends StatefulWidget {
-  final String tapStr;
-  final String lvlPrice;
-  final String pasProf;
+  final AbstractProgressManager manager;
 
-  const UpgradesPage({
-    super.key,
-    required this.tapStr,
-    required this.lvlPrice,
-    required this.pasProf,
-  });
+  const UpgradesPage({super.key, required this.manager});
 
   @override
   _UpgradesPageState createState() => _UpgradesPageState();
 }
 
 class _UpgradesPageState extends State<UpgradesPage> {
-  final TextEditingController _promoController = TextEditingController();
-  String _promoMessage = '';
   String _selectedAction = 'Купить';
   String _selectedMultiplier = '1x';
 
-  void _checkPromoCode() {
-    if (_promoController.text == "ilovenan") {
-      setState(() {
-        _promoMessage = '+2 000 000';
-      });
-      Future.delayed(const Duration(seconds: 2), () {
-        setState(() {
-          _promoMessage = '';
-        });
-      });
-    } else {
-      setState(() {
-        _promoMessage = 'Invalid promo code';
-      });
-      Future.delayed(const Duration(seconds: 2), () {
-        setState(() {
-          _promoMessage = '';
-        });
-      });
+  void _handleUpgrade(String upgradeId, int multiplier) {
+    setState(() {
+      if (_selectedAction == 'Купить') {
+        for (int i = 0; i < multiplier; i++) {
+          widget.manager.levelUpUpgrade(upgradeId, 1);
+        }
+      }
+      // Вы можете реализовать продажу, если это потребуется.
+    });
+  }
+
+  int _getMultiplier() {
+    switch (_selectedMultiplier) {
+      case '10x':
+        return 10;
+      case '100x':
+        return 100;
+      default:
+        return 1;
     }
   }
 
-  Widget buildUpgradeCard(String title, String profitPerHour, String imagePath, String price) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      padding: const EdgeInsets.all(12.0),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1D466C),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Image.asset(imagePath, width: 40, height: 40),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'в час: $profitPerHour',
-                  style: const TextStyle(color: Colors.white54, fontSize: 12),
-                ),
-              ],
+  Widget _buildUpgradeCard(Upgrade upgrade) {
+    final state = widget.manager.getState();
+    final canAfford = state.getAmount() >= upgrade.levelUpPrice;
+
+    return GestureDetector(
+      onTap: canAfford
+          ? () {
+        _handleUpgrade(upgrade.upgradeId, _getMultiplier());
+      }
+          : null,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.all(12.0),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1D466C),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Image.asset(upgrade.imagePath, width: 40, height: 40),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    upgrade.displayName,
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'В час: ${upgrade.earn().toStringAsFixed(2)}',
+                    style: const TextStyle(color: Colors.white54, fontSize: 12),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Text(
-            price,
-            style: const TextStyle(color: Colors.orange, fontSize: 18),
-          ),
-          const SizedBox(width: 5),
-          Image.asset('assets/image/coin.png', width: 24, height: 24),
-        ],
+            Text(
+              upgrade.levelUpPrice.toStringAsFixed(2),
+              style: TextStyle(
+                color: canAfford ? Colors.orange : Colors.grey,
+                fontSize: 18,
+              ),
+            ),
+            const SizedBox(width: 5),
+            Image.asset('assets/image/coin.png', width: 24, height: 24),
+          ],
+        ),
       ),
     );
   }
@@ -130,6 +135,9 @@ class _UpgradesPageState extends State<UpgradesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final state = widget.manager.getState();
+    final upgrades = widget.manager.getUpgradesRegistry().getUpgrades();
+
     return Scaffold(
       backgroundColor: const Color(0xFF07223C),
       appBar: AppBar(
@@ -142,9 +150,10 @@ class _UpgradesPageState extends State<UpgradesPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              buildMenuCard('Earn per tap', '+${widget.tapStr}', 'assets/image/coin.png', Colors.orange, 120),
-              buildMenuCard('Coins to level up', '${widget.lvlPrice}', 'assets/image/coin.png', Colors.blue, 120),
-              buildMenuCard('Profit per second', '+${widget.pasProf}', 'assets/image/coin.png', Colors.green, 120),
+              Text(
+                'Баланс: ${state.getAmount().toStringAsFixed(2)}',
+                style: const TextStyle(color: Colors.white, fontSize: 18),
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -153,44 +162,6 @@ class _UpgradesPageState extends State<UpgradesPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Promo Code Section
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1D466C),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _promoController,
-                          decoration: const InputDecoration(
-                            hintText: 'Промокод',
-                            hintStyle: TextStyle(color: Colors.white54),
-                            border: InputBorder.none,
-                          ),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: _checkPromoCode,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.orange,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            _promoMessage.isEmpty ? 'Применить' : _promoMessage,
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
                 // Buy/Sell and Multipliers Section
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -202,7 +173,6 @@ class _UpgradesPageState extends State<UpgradesPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildActionButton('Купить'),
-                      _buildActionButton('Продать'),
                       _buildMultiplierButton('1x'),
                       _buildMultiplierButton('10x'),
                       _buildMultiplierButton('100x'),
@@ -210,16 +180,11 @@ class _UpgradesPageState extends State<UpgradesPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Upgrades List внутри Padding и Expanded
+                // Upgrades List
                 SizedBox(
-                  height: 400, // Задаем фиксированную высоту, чтобы контент был видим.
+                  height: 400,
                   child: ListView(
-                    children: [
-                      buildUpgradeCard('Пекарь', '1.61K', 'assets/image/upg1.png', '156.92K'),
-                      buildUpgradeCard('Пекарь-кондитер', '1.61K', 'assets/image/upg2.png', '156.92K'),
-                      buildUpgradeCard('Пекарный аппарат', '1.61K', 'assets/image/upg3.png', '156.92K'),
-                      buildUpgradeCard('Супер пекарь', '1.61K', 'assets/image/upg4.png', '156.92K'),
-                    ],
+                    children: upgrades.map(_buildUpgradeCard).toList(),
                   ),
                 ),
               ],

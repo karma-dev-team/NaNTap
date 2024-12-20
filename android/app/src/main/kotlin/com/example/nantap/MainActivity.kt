@@ -1,4 +1,4 @@
-package com.example.nantap
+package com.nantap.nantap
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -19,6 +19,11 @@ class ProgressManager implements AbstractProgressManager {
   );
 
   @override
+  AbstractUpgradesRegistry getUpgradesRegistry() {
+    return upgradesRegistry;
+  }
+
+  @override
   Future<void> saveProgress() async {
     // Save the current state to storage
     await storage.saveData({

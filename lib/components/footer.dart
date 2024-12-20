@@ -29,7 +29,7 @@ class Footer extends StatelessWidget {
           _buildBottomMenuItem(
             context,
             'Улучшения',
-            "assets/image/uparrow.png",
+            Icons.construction,
             selectedIndex == 1 ? Colors.orange : Colors.white,
             selectedIndex == 1,
             1, // Индекс для страницы улучшений

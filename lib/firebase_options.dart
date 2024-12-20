@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '106272095361',
     projectId: 'nantap-6ca4a',
     storageBucket: 'nantap-6ca4a.appspot.com',
-    iosBundleId: 'com.example.nantap',
+    iosBundleId: 'com.nantap.nantap',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '106272095361',
     projectId: 'nantap-6ca4a',
     storageBucket: 'nantap-6ca4a.appspot.com',
-    iosBundleId: 'com.example.nantap',
+    iosBundleId: 'com.nantap.nantap',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

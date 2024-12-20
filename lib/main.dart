@@ -1,65 +1,82 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async'; // Для использования Timer
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:nantap/firebase_options.dart';
-import 'package:nantap/pages/acievments.dart';
 import 'package:nantap/pages/bazar.dart';
 import 'package:nantap/pages/friends.dart';
 import 'package:nantap/pages/home.dart';
 import 'package:nantap/pages/profile.dart';
-import 'package:nantap/pages/statistics.dart';
 import 'package:nantap/pages/upgrades.dart';
 import 'package:nantap/components/footer.dart';
 import 'package:nantap/progress/achievment_manager.dart';
 import 'package:nantap/progress/interfaces.dart';
 import 'package:nantap/progress/manager.dart';
 import 'package:nantap/progress/storage.dart';
+import 'package:nantap/progress/upgrade.dart';
+import 'package:nantap/progress/upgradesList.dart';
 
 void main() async {
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
+  var storage = SQLiteStorage();
+  var achievementManager = AchievmentManager(storage);
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  var storage = SQLiteStorage(); 
-  var achievementManager = AchievmentManager(storage); 
+  var progressManager = ProgressManager(storage, achievementManager);
 
-  var progressManager = new ProgressManager(storage, achievementManager); 
+  setupUpgradesRegistry(progressManager.getUpgradesRegistry());
 
-  runApp(MyApp(progressManager: progressManager,));
+  runApp(MyApp(progressManager: progressManager));
 }
 
+
 class MyApp extends StatefulWidget {
-  final AbstractProgressManager progressManager; 
+  final AbstractProgressManager progressManager;
 
   MyApp({required this.progressManager, super.key});
 
   @override
   _MyAppState createState() => _MyAppState(progressManager);
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Navigation Example',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'NanTap', manager: progressManager),
-    );
-  }
 }
 
 class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
 
-  ProgressManager manager; 
+  AbstractProgressManager manager;
 
-  _MyAppState(this.manager)
+  late Timer _timer; // Таймер для выполнения задачи
 
-  List<Widget> _pages = <Widget>[
-    MyHomePage(title: 'NanTap', manager: manager),
-    const UpgradesPage(tapStr: '0', lvlPrice: '0', pasProf: '0',),
-    const MarketPage(),
-    const FriendsPage(),
-    const ProfilePage(),
-  ];
+  _MyAppState(this.manager);
+
+  @override
+  void initState() {
+    super.initState();
+    // Запуск задачи, выполняющейся каждую секунду
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        manager.getState().increase(manager.getState().calcBread());
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // Остановка таймера при удалении виджета
+    _timer.cancel();
+    super.dispose();
+  }
+
+  List<Widget> pages() {
+    List<Widget> _pages = <Widget>[
+      MyHomePage(title: 'NanTap', manager: manager),
+      UpgradesPage(manager: manager,),
+      MarketPage(),
+      FriendsPage(),
+      ProfilePage(),
+    ];
+
+    return _pages;
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -78,7 +95,7 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         body: IndexedStack(
           index: _selectedIndex,
-          children: _pages,
+          children: pages(),
         ),
         bottomNavigationBar: Footer(
           selectedIndex: _selectedIndex,

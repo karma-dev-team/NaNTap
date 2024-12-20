@@ -1,15 +1,13 @@
-import 'package:nantap/components/cardBuilder.dart';
 import 'dart:async';
-import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
+import 'package:nantap/components/cardBuilder.dart';
 import 'package:nantap/components/tapper.dart';
 import 'package:nantap/progress/interfaces.dart';
-import 'package:nantap/progress/manager.dart';
 
 class MyHomePage extends StatefulWidget {
-
   final String title;
-  final AbstractProgressManager manager; 
+  final AbstractProgressManager manager;
 
   const MyHomePage({super.key, required this.manager, required this.title});
 
@@ -18,35 +16,38 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double _counter = 0;
-  double tapstr = 1;
-  double pasprof = 0;
-  double lvlprice = 100;
-  int curlvl = 1;
   Timer? _passiveIncome;
 
-  ProgressManager manager; 
+  @override
+  void initState() {
+    super.initState();
+    _startPassiveIncomeTimer();
+  }
 
-  _MyHomePageState(this.manager); 
+  @override
+  void dispose() {
+    _passiveIncome?.cancel();
+    super.dispose();
+  }
 
   void _incrementCounter() {
     setState(() {
-      _counter += tapstr;
+      var state = widget.manager.getState();
+      state.increase(state.tapStrength.toDouble());
 
-      if (_counter >= lvlprice) {
-        _counter -= lvlprice;
-        lvlprice += (lvlprice * 1.5).toInt();
-        curlvl++;
+      if (state.getAmount() >= state.nextLevelPrice()) {
+        state.decrease(state.nextLevelPrice());
+        state.addLevel(1);
 
-        if (curlvl % 5 == 0) {
-          pasprof += 1;
+        if (state.level % 5 == 0) {
+          widget.manager.getState().addBread(1);
           _startPassiveIncomeTimer();
         }
 
-        if (tapstr < 10) {
-          tapstr += 1;
+        if (state.tapStrength < 10) {
+          state.tapStrength += 1;
         } else {
-          tapstr += 2;
+          state.tapStrength += 2;
         }
       }
     });
@@ -56,13 +57,15 @@ class _MyHomePageState extends State<MyHomePage> {
     _passiveIncome?.cancel();
     _passiveIncome = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        _counter += pasprof;
+        widget.manager.getState().increase(widget.manager.getState().calcBread());
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    var state = widget.manager.getState();
+
     return Scaffold(
       backgroundColor: const Color(0xFF07223C),
       appBar: AppBar(
@@ -79,9 +82,9 @@ class _MyHomePageState extends State<MyHomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  buildMenuCard('Earn per tap', '+$tapstr', 'assets/image/coin.png', Colors.orange, 120),
-                  buildMenuCard('Coins to level up', '$lvlprice', 'assets/image/coin.png', Colors.blue, 120),
-                  buildMenuCard('Profit per second', '+$pasprof', 'assets/image/coin.png', Colors.green, 120),
+                  buildMenuCard('Earn per tap', '+${state.tapStrength}', 'assets/image/coin.png', Colors.orange, 120),
+                  buildMenuCard('Coins to level up', '${state.nextLevelPrice()}', 'assets/image/coin.png', Colors.blue, 120),
+                  buildMenuCard('Profit per second', '+${state.calcBread()}', 'assets/image/coin.png', Colors.green, 120),
                 ],
               ),
               const SizedBox(height: 40),
@@ -89,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '$_counter',
+                    '${state.getAmount()}',
                     style: const TextStyle(
                       fontSize: 50.0,
                       fontWeight: FontWeight.bold,
@@ -130,7 +133,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     const SizedBox(height: 5),
                     LinearProgressIndicator(
-                      value: _counter / lvlprice,
+                      value: state.nextLevelPrice() > 0
+                          ? (state.getAmount() / state.nextLevelPrice()).clamp(0.0, 1.0)
+                          : 0.0,
                       backgroundColor: Colors.blueGrey[700],
                       valueColor: const AlwaysStoppedAnimation<Color>(Colors.orange),
                       minHeight: 10.0,

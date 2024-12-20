@@ -10,6 +10,8 @@ abstract class AbstractProgressManager {
   /// Manages upgrades for the player.
   void levelUpUpgrade(String upgradeId, int level);
 
+  AbstractUpgradesRegistry getUpgradesRegistry();
+
   GlobalState getState();   
 
   /// Calculates the total earnings from upgrades and companies.
@@ -25,6 +27,8 @@ abstract class AbstractUpgradesRegistry {
 
   /// checks upgrades 
   bool checkUpgrade(String id);
+
+  Set<Upgrade> getUpgrades();
 
   void syncUpgradesWithState(GlobalState state);
 }
