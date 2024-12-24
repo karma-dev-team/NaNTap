@@ -132,7 +132,7 @@ class _MainAppState extends State<MainApp> {
       UpgradesPage(manager: manager),
       MarketPage(progressManager: manager),
       FriendsPage(),
-      ProfilePage(),
+      ProfilePage(progressManager: manager,),
     ];
   }
 
