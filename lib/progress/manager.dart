@@ -18,6 +18,10 @@ class ProgressManager implements AbstractProgressManager {
     this.achievementManager, 
   );
 
+  AbstractStorage getStorage() { 
+    return storage; 
+  }
+
   @override
   AbstractUpgradesRegistry getUpgradesRegistry() {
     return upgradesRegistry;

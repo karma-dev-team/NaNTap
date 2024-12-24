@@ -1,4 +1,5 @@
-import 'dart:async'; // Для использования Timer
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:nantap/firebase_options.dart';
@@ -12,13 +13,14 @@ import 'package:nantap/progress/achievment_manager.dart';
 import 'package:nantap/progress/interfaces.dart';
 import 'package:nantap/progress/manager.dart';
 import 'package:nantap/progress/storage.dart';
-import 'package:nantap/progress/upgrade.dart';
 import 'package:nantap/progress/upgradesList.dart';
 
 void main() async {
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   var storage = SQLiteStorage();
   var achievementManager = AchievmentManager(storage);
 
@@ -26,32 +28,91 @@ void main() async {
 
   setupUpgradesRegistry(progressManager.getUpgradesRegistry());
 
-  runApp(MyApp(progressManager: progressManager));
+  runApp(MyApp(progressManager: progressManager, isTestMode: false));
 }
-
 
 class MyApp extends StatefulWidget {
   final AbstractProgressManager progressManager;
+  final bool isTestMode;
 
-  MyApp({required this.progressManager, super.key});
+  const MyApp({required this.progressManager, required this.isTestMode, super.key});
 
   @override
-  _MyAppState createState() => _MyAppState(progressManager);
+  _MyAppState createState() => _MyAppState(progressManager, isTestMode);
 }
 
 class _MyAppState extends State<MyApp> {
-  int _selectedIndex = 0;
+  final AbstractProgressManager manager;
+  final bool isTestMode;
 
-  AbstractProgressManager manager;
+  User? _user;
 
-  late Timer _timer; // Таймер для выполнения задачи
-
-  _MyAppState(this.manager);
+  _MyAppState(this.manager, this.isTestMode);
 
   @override
   void initState() {
     super.initState();
-    // Запуск задачи, выполняющейся каждую секунду
+    if (!isTestMode) {
+      _checkAuthState();
+    } else {
+      // В тестовом режиме пользователь считается авторизованным
+      setState(() {
+        _user = null; // Пользователь не нужен для тестового режима
+      });
+    }
+  }
+
+  void _checkAuthState() {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      setState(() {
+        _user = user;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isTestMode || _user != null) {
+      return MaterialApp(
+        title: 'NaNTap',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: MainApp(manager: manager),
+      );
+    }
+
+    return MaterialApp(
+      title: 'NaNTap',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: AuthPage(progressManager: manager),
+    );
+  }
+}
+
+class MainApp extends StatefulWidget {
+  final AbstractProgressManager manager;
+
+  const MainApp({required this.manager, super.key});
+
+  @override
+  _MainAppState createState() => _MainAppState(manager);
+}
+
+class _MainAppState extends State<MainApp> {
+  int _selectedIndex = 0;
+  final AbstractProgressManager manager;
+  late Timer _timer;
+
+  _MainAppState(this.manager);
+
+  @override
+  void initState() {
+    super.initState();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         manager.getState().increase(manager.getState().calcBread());
@@ -61,21 +122,18 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    // Остановка таймера при удалении виджета
     _timer.cancel();
     super.dispose();
   }
 
   List<Widget> pages() {
-    List<Widget> _pages = <Widget>[
+    return [
       MyHomePage(title: 'NanTap', manager: manager),
-      UpgradesPage(manager: manager,),
-      MarketPage(),
+      UpgradesPage(manager: manager),
+      MarketPage(progressManager: manager),
       FriendsPage(),
       ProfilePage(),
     ];
-
-    return _pages;
   }
 
   void _onItemTapped(int index) {
@@ -86,20 +144,74 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'NaNTap',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return Scaffold(
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: pages(),
       ),
-      home: Scaffold(
-        body: IndexedStack(
-          index: _selectedIndex,
-          children: pages(),
-        ),
-        bottomNavigationBar: Footer(
-          selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
+      bottomNavigationBar: Footer(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      ),
+    );
+  }
+}
+
+class AuthPage extends StatefulWidget {
+  final AbstractProgressManager progressManager;
+
+  const AuthPage({required this.progressManager, Key? key}) : super(key: key);
+
+  @override
+  _AuthPageState createState() => _AuthPageState(progressManager);
+}
+
+class _AuthPageState extends State<AuthPage> {
+  final AbstractProgressManager progressManager;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  _AuthPageState(this.progressManager);
+
+  Future<void> _signIn() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to sign in: $e')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Sign In'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: 'Email'),
+            ),
+            TextField(
+              controller: _passwordController,
+              decoration: const InputDecoration(labelText: 'Password'),
+              obscureText: true,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _signIn,
+              child: const Text('Sign In'),
+            ),
+          ],
         ),
       ),
     );

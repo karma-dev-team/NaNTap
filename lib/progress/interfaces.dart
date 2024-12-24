@@ -14,6 +14,8 @@ abstract class AbstractProgressManager {
 
   GlobalState getState();   
 
+  AbstractStorage getStorage(); 
+
   /// Calculates the total earnings from upgrades and companies.
   double calculateTotalEarnings();
 

@@ -19,6 +19,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Timer? _passiveIncome;
 
   @override
+
+
+  @override
   void initState() {
     super.initState();
     _startPassiveIncomeTimer();
@@ -33,23 +36,34 @@ class _MyHomePageState extends State<MyHomePage> {
   void _incrementCounter() {
     setState(() {
       var state = widget.manager.getState();
-      state.increase(state.tapStrength.toDouble());
 
-      if (state.getAmount() >= state.nextLevelPrice()) {
-        state.decrease(state.nextLevelPrice());
+      // Увеличиваем bufferBread
+      state.bufferBread += state.tapStrength.toDouble();
+
+      // Проверяем, если bufferBread достигает стоимости следующего уровня
+      if (state.bufferBread >= state.nextLevelPrice()) {
+        // Увеличиваем уровень
         state.addLevel(1);
 
-        if (state.level % 5 == 0) {
-          widget.manager.getState().addBread(1);
-          _startPassiveIncomeTimer();
-        }
+        // Перерасчет стоимости следующего уровня
+        state.lvlPrice = (state.level * state.lvlPrice * 1.5).toInt();
 
+        // Увеличиваем tapStrength
         if (state.tapStrength < 10) {
           state.tapStrength += 1;
         } else {
           state.tapStrength += 2;
         }
+
+        // Награда каждые 5 уровней
+        if (state.level % 5 == 0) {
+          state.addBread(1); // Награда добавляется в breadCount
+          _startPassiveIncomeTimer(); // Обновляем таймер пассивного дохода
+        }
       }
+
+      // Обновляем основной баланс
+      state.breadCount = state.bufferBread;
     });
   }
 
@@ -57,7 +71,9 @@ class _MyHomePageState extends State<MyHomePage> {
     _passiveIncome?.cancel();
     _passiveIncome = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        widget.manager.getState().increase(widget.manager.getState().calcBread());
+        var state = widget.manager.getState();
+        state.bufferBread += state.calcBread(); // Пассивный доход
+        state.breadCount = state.bufferBread;  // Синхронизация основного баланса
       });
     });
   }
@@ -91,19 +107,26 @@ class _MyHomePageState extends State<MyHomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    '${state.getAmount()}',
-                    style: const TextStyle(
-                      fontSize: 50.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Image.asset(
-                    'assets/image/coin.png',
-                    width: 50.0,
-                    height: 50.0,
+                  Column(
+                    children: [
+                      Text(
+                        '${state.getBufferAmountShortend()}',
+                        style: const TextStyle(
+                          fontSize: 50.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Реальный баланс: ${state.humanize(state.breadCount)}',
+                        style: const TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -134,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     const SizedBox(height: 5),
                     LinearProgressIndicator(
                       value: state.nextLevelPrice() > 0
-                          ? (state.getAmount() / state.nextLevelPrice()).clamp(0.0, 1.0)
+                          ? (state.breadCount / state.nextLevelPrice()).clamp(0.0, 1.0)
                           : 0.0,
                       backgroundColor: Colors.blueGrey[700],
                       valueColor: const AlwaysStoppedAnimation<Color>(Colors.orange),

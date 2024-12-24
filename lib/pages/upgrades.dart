@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nantap/components/cardBuilder.dart';
 import 'package:nantap/progress/interfaces.dart';
 import 'package:nantap/progress/upgrade.dart';
 
@@ -18,11 +19,27 @@ class _UpgradesPageState extends State<UpgradesPage> {
   void _handleUpgrade(String upgradeId, int multiplier) {
     setState(() {
       if (_selectedAction == 'Купить') {
-        for (int i = 0; i < multiplier; i++) {
-          widget.manager.levelUpUpgrade(upgradeId, 1);
+        final state = widget.manager.getState();
+        final upgrade = widget.manager
+            .getUpgradesRegistry()
+            .getUpgrades()
+            .firstWhere((u) => u.upgradeId == upgradeId);
+
+        // Проверяем, хватает ли средств на покупку множества уровней
+        double totalCost = upgrade.levelUpPrice * multiplier;
+        if (state.getAmount() >= totalCost) {
+          for (int i = 0; i < multiplier; i++) {
+            // Увеличиваем уровень апгрейда через менеджер
+            widget.manager.levelUpUpgrade(upgradeId, 1);
+            // Уменьшаем количество денег в кошельке
+            state.decrease(upgrade.levelUpPrice);
+          }
+        } else {
+          // Опционально можно добавить уведомление, если средств недостаточно
+          print("Недостаточно средств для покупки.");
         }
       }
-      // Вы можете реализовать продажу, если это потребуется.
+      // Здесь можно добавить логику для продажи, если потребуется
     });
   }
 
@@ -39,13 +56,13 @@ class _UpgradesPageState extends State<UpgradesPage> {
 
   Widget _buildUpgradeCard(Upgrade upgrade) {
     final state = widget.manager.getState();
-    final canAfford = state.getAmount() >= upgrade.levelUpPrice;
+    final canAfford = state.getAmount() >= (upgrade.levelUpPrice * _getMultiplier());
 
     return GestureDetector(
       onTap: canAfford
           ? () {
-        _handleUpgrade(upgrade.upgradeId, _getMultiplier());
-      }
+              _handleUpgrade(upgrade.upgradeId, _getMultiplier());
+            }
           : null,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -75,7 +92,7 @@ class _UpgradesPageState extends State<UpgradesPage> {
               ),
             ),
             Text(
-              upgrade.levelUpPrice.toStringAsFixed(2),
+              (upgrade.levelUpPrice * _getMultiplier()).toStringAsFixed(2),
               style: TextStyle(
                 color: canAfford ? Colors.orange : Colors.grey,
                 fontSize: 18,
@@ -150,9 +167,18 @@ class _UpgradesPageState extends State<UpgradesPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              buildMenuCard('Earn per tap', '+${state.tapStrength}', 'assets/image/coin.png', Colors.orange, 120),
+              buildMenuCard('Coins to level up', '${state.nextLevelPrice()}', 'assets/image/coin.png', Colors.blue, 120),
+              buildMenuCard('Profit per second', '+${state.calcBread()}', 'assets/image/coin.png', Colors.green, 120),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
               Text(
                 'Баланс: ${state.getAmount().toStringAsFixed(2)}',
                 style: const TextStyle(color: Colors.white, fontSize: 18),
+                textAlign: TextAlign.left,
               ),
             ],
           ),

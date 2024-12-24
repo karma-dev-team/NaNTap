@@ -7,6 +7,7 @@ class GlobalState implements AbstractWallet {
   double breadCount;
   int tapStrength = 0; 
   int lvlPrice = 100; 
+  double bufferBread = 0; // used for buffer for jumping between levels on home page nothing more. 
   List<Upgrade> upgrades;
   List<Company> companies;
   List<String> achievements;
@@ -15,6 +16,24 @@ class GlobalState implements AbstractWallet {
 
   double getAmount() { 
     return breadCount; 
+  }
+
+  String getAmountShortened() { 
+    return humanize(breadCount); 
+  }
+
+  String getBufferAmountShortend() { 
+    return humanize(bufferBread);
+  }
+
+  String humanize(double breadCount) { 
+    if (breadCount > 1000 && breadCount < 1000000 ) { 
+      return "$breadCount тыс."; 
+    } if (breadCount > 1000000) { 
+      return "$breadCount млн."; 
+    } else { 
+      return "$breadCount"; 
+    }
   }
 
   bool increase(double amount) {
@@ -53,7 +72,7 @@ class GlobalState implements AbstractWallet {
     );
   }
 
-  double nextLevelPrice() => level * lvlPrice * 1.5; 
+  double nextLevelPrice() => level * lvlPrice * 1.0; 
 
   void addLevel(int levelToAdd) {
     level += levelToAdd;

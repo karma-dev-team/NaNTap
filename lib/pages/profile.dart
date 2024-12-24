@@ -1,39 +1,87 @@
 import 'package:flutter/material.dart';
+import 'package:nantap/progress/interfaces.dart';
+import 'package:nantap/progress/state.dart';
+import 'package:nantap/progress/upgrade.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  final AbstractProgressManager progressManager;
+
+  const ProfilePage({
+    Key? key,
+    required this.progressManager,
+  }) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String username = "PikoUsername"; // Имя пользователя
-  String email = "piko@example.com"; // Email пользователя
-  String companyName = "Ohno corp"; // Название компании
+  late String username;
+  late String email;
+  late String companyName;
+
   bool isEditingName = false;
   bool isEditingEmail = false;
   bool isEditingCompany = false;
 
-  // Переменная для хранения ошибки email
   String? emailError;
 
-  // Регулярное выражение для проверки email
   final RegExp emailRegExp = RegExp(
     r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
   );
 
-  // Метод для валидации email
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileData();
+  }
+
+  Future<void> _loadProfileData() async {
+    final storage = await widget.progressManager.getStorage();
+    final data = await storage.extractData();
+
+    setState(() {
+      username = data['username'] as String? ?? "User";
+      email = data['email'] as String? ?? "example@example.com";
+      companyName = data['companyName'] as String? ?? "Unknown Corp";
+    });
+  }
+
+  void _updateProfile(String field, String value) async {
+    final storage = await widget.progressManager.getStorage();
+    final data = await storage.extractData();
+
+    setState(() {
+      switch (field) {
+        case "username":
+          username = value;
+          data['username'] = value;
+          break;
+        case "email":
+          email = value;
+          data['email'] = value;
+          break;
+        case "companyName":
+          companyName = value;
+          data['companyName'] = value;
+          break;
+      }
+    });
+
+    await storage.saveData(data);
+    widget.progressManager.saveProgress();
+  }
+
   void validateEmail(String newEmail) {
     if (emailRegExp.hasMatch(newEmail)) {
       setState(() {
-        emailError = null; // Email корректный, убираем ошибку
-        email = newEmail; // Сохраняем новый email
+        emailError = null;
         isEditingEmail = false;
       });
+      _updateProfile("email", newEmail);
     } else {
       setState(() {
-        emailError = 'Неверный формат email'; // Устанавливаем ошибку
+        emailError = 'Неверный формат email';
       });
     }
   }
@@ -48,13 +96,12 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: SafeArea(
         child: Container(
-          color: const Color(0xFF07223C), // Задний фон основной области
+          color: const Color(0xFF07223C),
           child: Column(
             children: [
-              // Блок с аватаром и ником, занимающий 100% ширины экрана
               Container(
-                width: MediaQuery.of(context).size.width, // 100% ширина экрана
-                color: const Color(0xFF153B5F), // Фон для аватара и ника
+                width: MediaQuery.of(context).size.width,
+                color: const Color(0xFF153B5F),
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Column(
                   children: [
@@ -68,7 +115,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    // Имя пользователя (ник)
                     Text(
                       username,
                       style: const TextStyle(
@@ -81,15 +127,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Расширяющийся контейнер с информацией
               Expanded(
                 child: SingleChildScrollView(
                   child: Container(
-                    width: MediaQuery.of(context).size.width, // 100% ширина экрана
+                    width: MediaQuery.of(context).size.width,
                     padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF153B5F), // Фон для информации о профиле
-                      borderRadius: const BorderRadius.only(
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF153B5F),
+                      borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
                       ),
@@ -99,14 +144,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         ProfileInfoRow(
                           icon: Icons.person,
-                          label: "Имя", // Имя пользователя
+                          label: "Имя",
                           value: username,
                           isEditing: isEditingName,
                           onSave: (newValue) {
                             setState(() {
-                              username = newValue;
                               isEditingName = false;
                             });
+                            _updateProfile("username", newValue);
                           },
                           onEdit: () {
                             setState(() {
@@ -114,14 +159,13 @@ class _ProfilePageState extends State<ProfilePage> {
                             });
                           },
                         ),
-                        // Email с валидацией
                         ProfileInfoRow(
                           icon: Icons.email,
-                          label: "Email", // Email пользователя
+                          label: "Email",
                           value: email,
                           isEditing: isEditingEmail,
-                          errorText: emailError, // Ошибка в email
-                          onSave: validateEmail, // Метод для валидации email
+                          errorText: emailError,
+                          onSave: validateEmail,
                           onEdit: () {
                             setState(() {
                               isEditingEmail = true;
@@ -130,14 +174,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         ProfileInfoRow(
                           icon: Icons.business,
-                          label: "Имя компании", // Название компании
+                          label: "Имя компании",
                           value: companyName,
                           isEditing: isEditingCompany,
                           onSave: (newValue) {
                             setState(() {
-                              companyName = newValue;
                               isEditingCompany = false;
                             });
+                            _updateProfile("companyName", newValue);
                           },
                           onEdit: () {
                             setState(() {
@@ -145,18 +189,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             });
                           },
                         ),
-                        ProfileInfoRow(
-                          icon: Icons.emoji_events,
-                          label: "Достижения",
-                          value: "10/124",
-                          isNavigable: true,
-                        ),
-                        const SizedBox(height: 20),
-                        ProfileNavigationItem(
+                        const ProfileNavigationItem(
                           icon: Icons.settings,
                           label: "Настройки",
                         ),
-                        ProfileNavigationItem(
+                        const ProfileNavigationItem(
                           icon: Icons.bar_chart,
                           label: "Статистика",
                         ),
@@ -181,7 +218,7 @@ class ProfileInfoRow extends StatelessWidget {
   final bool isEditing;
   final Function(String)? onSave;
   final Function()? onEdit;
-  final String? errorText; // Поле для ошибки
+  final String? errorText;
 
   const ProfileInfoRow({
     Key? key,
@@ -205,43 +242,33 @@ class ProfileInfoRow extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: isEditing
-                ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextField(
-                  autofocus: true,
-                  onSubmitted: onSave,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: label,
-                    hintStyle: const TextStyle(color: Colors.white54),
-                    errorText: errorText, // Показываем ошибку
-                  ),
-                ),
-                if (errorText != null)
-                  Text(
-                    errorText!,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-              ],
-            )
+                ? TextField(
+                    autofocus: true,
+                    onSubmitted: onSave,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      hintText: label,
+                      hintStyle: const TextStyle(color: Colors.white54),
+                      errorText: errorText,
+                    ),
+                  )
                 : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(color: Colors.white70),
-                ),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                      Text(
+                        value,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
           ),
           if (isNavigable)
             const Icon(
