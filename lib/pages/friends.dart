@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nantap/components/footer.dart';
 
 class FriendsPage extends StatelessWidget {
   const FriendsPage({super.key});
@@ -20,7 +21,6 @@ class FriendsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Заголовок
             const Center(
               child: Text(
                 'Пригласите друзей!',
@@ -43,8 +43,6 @@ class FriendsPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Кнопки приглашения друзей
             Container(
               decoration: BoxDecoration(
                 color: const Color(0xFF14233C),
@@ -53,17 +51,24 @@ class FriendsPage extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  const InviteFriendButton(text: 'Пригласите друга', bonus: '+2 За друга', imagePath: 'assets/image/coin.png',),
+                  const InviteFriendButton(
+                    text: 'Пригласите друга',
+                    bonus: '+2 За друга',
+                    imagePath: 'assets/image/coin.png',
+                  ),
                   const SizedBox(height: 10),
-                  const InviteFriendButton(text: 'Пригласите еще друга', bonus: '+3 За друга', imagePath: 'assets/image/coin.png',),
+                  const InviteFriendButton(
+                    text: 'Пригласите еще друга',
+                    bonus: '+3 За друга',
+                    imagePath: 'assets/image/coin.png',
+                  ),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      // Заглушка для получения реферальной ссылки
                       print('Получить реферальную ссылку');
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7F6BFF), // цвет кнопки
+                      backgroundColor: const Color(0xFF7F6BFF),
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -72,24 +77,26 @@ class FriendsPage extends StatelessWidget {
                     child: const Text(
                       'Получить реферальную ссылку',
                       style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),)
+                    ),
+                  )
                 ],
               ),
             ),
             const SizedBox(height: 20),
-
-            // Список друзей
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   'Список ваших друзей',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white70,),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white70,
+                  ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.refresh, color: Colors.white70),
                   onPressed: () {
-                    // Заглушка для обновления списка друзей
                     print('Обновить список друзей');
                   },
                 ),
@@ -106,64 +113,64 @@ class FriendsPage extends StatelessWidget {
           ],
         ),
       ),
-bottomNavigationBar: Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-  child: Row(
-    children: [
-      // Кнопка "Пригласить друзей"
-      Expanded(
-        child: ElevatedButton(
-          onPressed: () {
-            // Заглушка для приглашения друзей
-            print('Пригласить друзей');
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFCD8032), // Цвет кнопки
-            padding: const EdgeInsets.symmetric(vertical: 25),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      print('Пригласить друзей');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFCD8032),
+                      padding: const EdgeInsets.symmetric(vertical: 25),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 8,
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.person_add, color: Colors.white),
+                        SizedBox(width: 10),
+                        Text(
+                          'Пригласить друзей',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    print('Скопировать ссылку');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFCD8032),
+                    padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 8,
+                  ),
+                  child: const Icon(Icons.copy, color: Colors.white),
+                ),
+              ],
             ),
-            elevation: 8,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center, // Центрирование элементов
-            children: [
-              const Icon(Icons.person_add, color: Colors.white), // Иконка "пригласить друга"
-              const SizedBox(width: 10),
-              const Text(
-                'Пригласить друзей',
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
-            ],
-          ),
-        ),
+          const Footer(selectedIndex: 3), // Укажите текущий индекс страницы
+        ],
       ),
-      const SizedBox(width: 10), // Промежуток между кнопками
-      // Кнопка "Скопировать"
-      ElevatedButton(
-        onPressed: () {
-          // Заглушка для копирования
-          print('Скопировать ссылку');
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFCD8032), // Цвет кнопки копирования
-          padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20), // Размер кнопки
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 8,
-        ),
-        child: const Icon(Icons.copy, color: Colors.white), // Иконка копирования
-      ),
-    ],
-  ),
-),
-
-
-
     );
   }
 }
+
 
 // Кнопка для приглашения друга
 class InviteFriendButton extends StatelessWidget {

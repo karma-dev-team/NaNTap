@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nantap/components/footer.dart';
 import 'package:nantap/progress/interfaces.dart';
 import 'package:nantap/progress/state.dart';
 import 'package:nantap/progress/upgrade.dart';
@@ -16,9 +17,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late String username;
-  late String email;
-  late String companyName;
+  String username = "";
+  String email = "";
+  String companyName = "";
+  String achievements = "";
 
   bool isEditingName = false;
   bool isEditingEmail = false;
@@ -44,6 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
       username = data['username'] as String? ?? "User";
       email = data['email'] as String? ?? "example@example.com";
       companyName = data['companyName'] as String? ?? "Unknown Corp";
+      achievements = data['achievements'] as String? ?? "0/0";
     });
   }
 
@@ -189,6 +192,16 @@ class _ProfilePageState extends State<ProfilePage> {
                             });
                           },
                         ),
+                        ProfileInfoRow(
+                          icon: Icons.emoji_events,
+                          label: "Достижения",
+                          value: achievements,
+                          isNavigable: true,
+                          onTap: () {
+                            Navigator.pushReplacementNamed(context, '/achivments');
+                          },
+                        ),
+                        const SizedBox(height: 20),
                         const ProfileNavigationItem(
                           icon: Icons.settings,
                           label: "Настройки",
@@ -202,9 +215,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ),
+
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: const Footer(
+        selectedIndex: 4,
       ),
     );
   }
@@ -218,6 +235,7 @@ class ProfileInfoRow extends StatelessWidget {
   final bool isEditing;
   final Function(String)? onSave;
   final Function()? onEdit;
+  final Function()? onTap; // Новый параметр
   final String? errorText;
 
   const ProfileInfoRow({
@@ -229,64 +247,67 @@ class ProfileInfoRow extends StatelessWidget {
     this.isEditing = false,
     this.onSave,
     this.onEdit,
+    this.onTap, // Инициализация нового параметра
     this.errorText,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.orange),
-          const SizedBox(width: 10),
-          Expanded(
-            child: isEditing
-                ? TextField(
-                    autofocus: true,
-                    onSubmitted: onSave,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: label,
-                      hintStyle: const TextStyle(color: Colors.white54),
-                      errorText: errorText,
-                    ),
-                  )
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        label,
-                        style: const TextStyle(color: Colors.white70),
+    return GestureDetector(
+      onTap: isNavigable ? onTap : null, // Реализация onTap
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.orange),
+            const SizedBox(width: 10),
+            Expanded(
+              child: isEditing
+                  ? TextField(
+                      autofocus: true,
+                      onSubmitted: onSave,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: label,
+                        hintStyle: const TextStyle(color: Colors.white54),
+                        errorText: errorText,
                       ),
-                      Text(
-                        value,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          label,
+                          style: const TextStyle(color: Colors.white70),
                         ),
-                      ),
-                    ],
-                  ),
-          ),
-          if (isNavigable)
-            const Icon(
-              Icons.arrow_forward_ios,
-              color: Colors.orange,
-              size: 16,
-            )
-          else
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.orange),
-              onPressed: onEdit,
+                        Text(
+                          value,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
             ),
-        ],
+            if (isNavigable)
+              const Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.orange,
+                size: 16,
+              )
+            else
+              IconButton(
+                icon: const Icon(Icons.edit, color: Colors.orange),
+                onPressed: onEdit,
+              ),
+          ],
+        ),
       ),
     );
   }
 }
-
 class ProfileNavigationItem extends StatelessWidget {
   final IconData icon;
   final String label;

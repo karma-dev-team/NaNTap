@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nantap/components/cardBuilder.dart';
+import 'package:nantap/components/footer.dart';
 import 'package:nantap/progress/interfaces.dart';
 import 'package:nantap/progress/upgrade.dart';
 
@@ -216,7 +217,11 @@ class _UpgradesPageState extends State<UpgradesPage> {
               ],
             ),
           ),
+          
         ],
+      ),
+      bottomNavigationBar: const Footer(
+        selectedIndex: 1,
       ),
     );
   }

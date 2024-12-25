@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:nantap/firebase_options.dart';
+import 'package:nantap/pages/acievments.dart';
+import 'package:nantap/pages/auth.dart';
 import 'package:nantap/pages/bazar.dart';
 import 'package:nantap/pages/friends.dart';
 import 'package:nantap/pages/home.dart';
@@ -11,9 +13,13 @@ import 'package:nantap/pages/upgrades.dart';
 import 'package:nantap/components/footer.dart';
 import 'package:nantap/progress/achievment_manager.dart';
 import 'package:nantap/progress/interfaces.dart';
+import 'package:nantap/progress/jsonstorage.dart';
 import 'package:nantap/progress/manager.dart';
 import 'package:nantap/progress/storage.dart';
 import 'package:nantap/progress/upgradesList.dart';
+import 'package:nantap/progress/webjsonstorage.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+import 'package:sqflite/sqflite.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,14 +27,16 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  var storage = SQLiteStorage();
+  var storage = WebJsonStorageAdapter();
   var achievementManager = AchievmentManager(storage);
+
+  await storage.setup(); 
 
   var progressManager = ProgressManager(storage, achievementManager);
 
   setupUpgradesRegistry(progressManager.getUpgradesRegistry());
 
-  runApp(MyApp(progressManager: progressManager, isTestMode: false));
+  runApp(MyApp(progressManager: progressManager, isTestMode: true));
 }
 
 class MyApp extends StatefulWidget {
@@ -55,9 +63,8 @@ class _MyAppState extends State<MyApp> {
     if (!isTestMode) {
       _checkAuthState();
     } else {
-      // В тестовом режиме пользователь считается авторизованным
       setState(() {
-        _user = null; // Пользователь не нужен для тестового режима
+        _user = null;
       });
     }
   }
@@ -72,24 +79,22 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    if (isTestMode || _user != null) {
-      return MaterialApp(
-        title: 'NaNTap',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: MainApp(manager: manager),
-      );
-    }
-
     return MaterialApp(
       title: 'NaNTap',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: AuthPage(progressManager: manager),
+      initialRoute: isTestMode || _user != null ? '/home' : '/auth',
+      routes: {
+        '/auth': (context) => AuthPage(progressManager: manager),
+        '/home': (context) => MainApp(manager: manager),
+        '/upgrades': (context) => UpgradesPage(manager: manager),
+        '/bazar': (context) => MarketPage(progressManager: manager),
+        '/friends': (context) => FriendsPage(),
+        '/profile': (context) => ProfilePage(progressManager: manager),
+        '/achivments': (context) => AchievementsPage()
+      },
     );
   }
 }
@@ -132,11 +137,30 @@ class _MainAppState extends State<MainApp> {
       UpgradesPage(manager: manager),
       MarketPage(progressManager: manager),
       FriendsPage(),
-      ProfilePage(progressManager: manager,),
+      ProfilePage(progressManager: manager),
     ];
   }
 
   void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/upgrades');
+        break;
+      case 2:
+        Navigator.pushReplacementNamed(context, '/bazar');
+        break;
+      case 3:
+        Navigator.pushReplacementNamed(context, '/friends');
+        break;
+      case 4:
+        Navigator.pushReplacementNamed(context, '/profile');
+        break;
+      default:
+        break;
+    }
     setState(() {
       _selectedIndex = index;
     });
@@ -151,68 +175,6 @@ class _MainAppState extends State<MainApp> {
       ),
       bottomNavigationBar: Footer(
         selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
-      ),
-    );
-  }
-}
-
-class AuthPage extends StatefulWidget {
-  final AbstractProgressManager progressManager;
-
-  const AuthPage({required this.progressManager, Key? key}) : super(key: key);
-
-  @override
-  _AuthPageState createState() => _AuthPageState(progressManager);
-}
-
-class _AuthPageState extends State<AuthPage> {
-  final AbstractProgressManager progressManager;
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  _AuthPageState(this.progressManager);
-
-  Future<void> _signIn() async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to sign in: $e')),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign In'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _signIn,
-              child: const Text('Sign In'),
-            ),
-          ],
-        ),
       ),
     );
   }

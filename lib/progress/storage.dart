@@ -1,7 +1,9 @@
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // Для поддержки ffi
 import 'package:path/path.dart';
 import 'dart:convert';
 import 'package:nantap/progress/interfaces.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 class SQLiteStorage implements AbstractStorage {
   Database? db;
@@ -9,19 +11,24 @@ class SQLiteStorage implements AbstractStorage {
   // Initialize and open the SQLite database
   @override
   Future<void> setup() async {
+    // Инициализация databaseFactory для sqflite_common_ffi
+    databaseFactory = databaseFactoryFfiWeb; 
+
+    // Получаем путь к базе данных
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'general.db');
 
+    // Открываем базу данных
     db = await openDatabase(
       path,
       version: 1,
       onCreate: (Database db, int version) async {
-        // Create the data table if it doesn't exist
+        // Создаём таблицу, если она отсутствует
         await db.execute('''
           CREATE TABLE data (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            key TEXT,
-            data TEXT
+            key TEXT NOT NULL UNIQUE,
+            data TEXT NOT NULL
           )
         ''');
       },
@@ -32,6 +39,7 @@ class SQLiteStorage implements AbstractStorage {
   @override
   Future<String> getRaw(String key) async {
     try {
+      if (db == null) throw Exception('Database is not initialized');
       List<Map<String, dynamic>> result = await db!.query(
         'data',
         where: 'key = ?',
@@ -40,8 +48,7 @@ class SQLiteStorage implements AbstractStorage {
       );
 
       if (result.isNotEmpty) {
-        var dataMap = jsonDecode(result.first['data']) as Map<String, dynamic>;
-        return dataMap.toString();
+        return result.first['data'] as String;
       }
 
       return '';
@@ -54,53 +61,29 @@ class SQLiteStorage implements AbstractStorage {
   @override
   Future<String> extractRaw() async {
     try {
+      if (db == null) throw Exception('Database is not initialized');
       List<Map<String, dynamic>> result = await db!.query('data');
-
-      List<Map<String, dynamic>> extractedData = result.map((row) {
-        return {
-          'key': row['key'],
-          'data': jsonDecode(row['data']),
-        };
-      }).toList();
-
-      return jsonEncode(extractedData);
+      return jsonEncode(result);
     } catch (e) {
       throw Exception('Failed to extract raw data: $e');
     }
   }
 
-  // Save data for a key in the SQLite database
+  // Save multiple key-value pairs in the SQLite database
   @override
   Future<void> saveData(Map<String, Object> data) async {
     try {
-      await Future.forEach(data.entries, (MapEntry<String, Object> entry) async {
+      if (db == null) throw Exception('Database is not initialized');
+      for (var entry in data.entries) {
         String key = entry.key;
         String jsonData = jsonEncode(entry.value);
 
-        // Check if the key already exists
-        List<Map<String, dynamic>> existingRow = await db!.query(
+        await db!.insert(
           'data',
-          where: 'key = ?',
-          whereArgs: [key],
-          limit: 1,
+          {'key': key, 'data': jsonData},
+          conflictAlgorithm: ConflictAlgorithm.replace,
         );
-
-        if (existingRow.isNotEmpty) {
-          // Update the existing row
-          await db!.update(
-            'data',
-            {'data': jsonData},
-            where: 'key = ?',
-            whereArgs: [key],
-          );
-        } else {
-          // Insert a new row
-          await db!.insert('data', {
-            'key': key,
-            'data': jsonData,
-          });
-        }
-      });
+      }
     } catch (e) {
       throw Exception('Failed to save data: $e');
     }
@@ -110,14 +93,12 @@ class SQLiteStorage implements AbstractStorage {
   @override
   Future<Map<String, Object>> extractData() async {
     try {
+      if (db == null) throw Exception('Database is not initialized');
       List<Map<String, dynamic>> result = await db!.query('data');
-
       Map<String, Object> extractedData = {};
-
       for (var row in result) {
         extractedData[row['key']] = jsonDecode(row['data']);
       }
-
       return extractedData;
     } catch (e) {
       throw Exception('Failed to extract data: $e');
@@ -128,6 +109,7 @@ class SQLiteStorage implements AbstractStorage {
   @override
   Future<Map<String, Object>> get(String key) async {
     try {
+      if (db == null) throw Exception('Database is not initialized');
       List<Map<String, dynamic>> result = await db!.query(
         'data',
         where: 'key = ?',
@@ -149,31 +131,14 @@ class SQLiteStorage implements AbstractStorage {
   @override
   Future<void> set(String key, Map<String, Object> data) async {
     try {
+      if (db == null) throw Exception('Database is not initialized');
       String jsonData = jsonEncode(data);
 
-      // Check if the key already exists
-      List<Map<String, dynamic>> existingRow = await db!.query(
+      await db!.insert(
         'data',
-        where: 'key = ?',
-        whereArgs: [key],
-        limit: 1,
+        {'key': key, 'data': jsonData},
+        conflictAlgorithm: ConflictAlgorithm.replace,
       );
-
-      if (existingRow.isNotEmpty) {
-        // Update the existing row
-        await db!.update(
-          'data',
-          {'data': jsonData},
-          where: 'key = ?',
-          whereArgs: [key],
-        );
-      } else {
-        // Insert a new row
-        await db!.insert('data', {
-          'key': key,
-          'data': jsonData,
-        });
-      }
     } catch (e) {
       throw Exception('Failed to set data: $e');
     }
@@ -183,6 +148,7 @@ class SQLiteStorage implements AbstractStorage {
   @override
   Future<void> remove(String key) async {
     try {
+      if (db == null) throw Exception('Database is not initialized');
       await db!.delete(
         'data',
         where: 'key = ?',

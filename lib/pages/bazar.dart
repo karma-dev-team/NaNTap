@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nantap/components/footer.dart';
 import 'package:nantap/progress/interfaces.dart';
 import 'package:nantap/progress/company.dart';
 
@@ -39,6 +40,9 @@ class MarketPage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: const Footer(
+        selectedIndex: 4,
       ),
     );
   }

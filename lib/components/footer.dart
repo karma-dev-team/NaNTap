@@ -2,96 +2,61 @@ import 'package:flutter/material.dart';
 
 class Footer extends StatelessWidget {
   final int selectedIndex;
-  final ValueChanged<int> onItemTapped;
 
   const Footer({
     super.key,
     required this.selectedIndex,
-    required this.onItemTapped,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      color: Colors.blueGrey[800],
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildBottomMenuItem(
-            context,
-            'Домой',
-            Icons.home,
-            selectedIndex == 0 ? Colors.orange : Colors.white,
-            selectedIndex == 0,
-            0, // Индекс для домашней страницы
-          ),
-          _buildBottomMenuItem(
-            context,
-            'Улучшения',
-            Icons.construction,
-            selectedIndex == 1 ? Colors.orange : Colors.white,
-            selectedIndex == 1,
-            1, // Индекс для страницы улучшений
-          ),
-          _buildBottomMenuItem(
-            context,
-            'Рынок',
-            Icons.shopping_basket,
-            selectedIndex == 2 ? Colors.orange : Colors.white,
-            selectedIndex == 2,
-            2, // Индекс для страницы рынка
-          ),
-          _buildBottomMenuItem(
-            context,
-            'Друзья',
-            Icons.people,
-            selectedIndex == 3 ? Colors.orange : Colors.white,
-            selectedIndex == 3,
-            3, // Индекс для страницы друзей
-          ),
-          _buildBottomMenuItem(
-            context,
-            'Профиль',
-            Icons.account_circle,
-            selectedIndex == 4 ? Colors.orange : Colors.white,
-            selectedIndex == 4,
-            4, // Индекс для страницы профиля
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomMenuItem(BuildContext context, String title, icon, Color iconColor, bool isActive, int index) {
-    return GestureDetector(
-      onTap: () {
-        // Передаем индекс в родительский виджет
-        onItemTapped(index);
+    return BottomNavigationBar(
+      currentIndex: selectedIndex,
+      onTap: (index) {
+        switch (index) {
+          case 0:
+            Navigator.pushReplacementNamed(context, '/home');
+            break;
+          case 1:
+            Navigator.pushReplacementNamed(context, '/upgrades');
+            break;
+          case 2:
+            Navigator.pushReplacementNamed(context, '/bazar');
+            break;
+          case 3:
+            Navigator.pushReplacementNamed(context, '/friends');
+            break;
+          case 4:
+            Navigator.pushReplacementNamed(context, '/profile');
+            break;
+        }
       },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: isActive ? Colors.blueGrey[700] : Colors.transparent,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: icon is IconData
-                ? Icon(icon, color: iconColor, size: 30)
-                : Image.asset(icon, width: 30, height: 30),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor: Colors.orange,
+      unselectedItemColor: Colors.white,
+      backgroundColor: Colors.blueGrey[800],
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Домой',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.construction),
+          label: 'Улучшения',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_basket),
+          label: 'Рынок',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.people),
+          label: 'Друзья',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.account_circle),
+          label: 'Профиль',
+        ),
+      ],
     );
   }
 }
