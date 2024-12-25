@@ -54,7 +54,7 @@ class AchievementsPage extends StatelessWidget {
                         child: const Icon(Icons.emoji_events, color: Colors.white),
                       ),
                       title: const Text(
-                        'Сосать и лежать',
+                        'Гиги за шаги',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
