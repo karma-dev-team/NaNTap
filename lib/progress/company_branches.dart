@@ -23,4 +23,15 @@ class CompanyBranches implements MoneyEarner {
 
     return result;
   }
+
+  @override
+  double tapBooster() {
+    double result = 0;
+
+    for (var upgrade in upgrades) {
+      result += upgrade.earnTapStrength();
+    }
+
+    return result;
+  }
 }

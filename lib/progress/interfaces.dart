@@ -62,6 +62,8 @@ abstract class AbstractStorage {
 
 abstract class MoneyEarner { 
   double breadEarned();
+  double tapBooster(); 
+  void levelUpUpgrade(String upgradeId, int levels); 
 }
 
 abstract class AbstractWallet { 

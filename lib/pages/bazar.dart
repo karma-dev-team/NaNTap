@@ -1,45 +1,110 @@
 import 'package:flutter/material.dart';
 import 'package:nantap/components/footer.dart';
-import 'package:nantap/progress/interfaces.dart';
-import 'package:nantap/progress/company.dart';
 
 class MarketPage extends StatelessWidget {
-  final AbstractProgressManager progressManager;
-
-  const MarketPage({required this.progressManager, super.key});
+  const MarketPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final state = progressManager.getState();
-
     return Scaffold(
       backgroundColor: const Color(0xFF07223C),
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Market'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: state.companies.length,
-                itemBuilder: (context, index) {
-                  final company = state.companies[index];
-                  return CompanyCard(company: company);
-                },
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () => showDialog(
-                context: context,
-                builder: (context) => CreateBakeryPopup(progressManager: progressManager),
-              ),
-              child: const Text('Создать пекарню в другом месте'),
-            ),
-          ],
+        backgroundColor: const Color(0xFF1D466C),
+        title: const Text(
+          'Филиалы',
+          style: TextStyle(color: Colors.white),
         ),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          // Верхняя часть с филиалами
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            height: 120,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 3, // Количество филиалов
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: BranchCard(
+                    location: index == 0 ? "Япония" : index == 1 ? "США" : "Африка",
+                    profit: 12200 + index * 300, // Пример прибыли
+                    level: 13,
+                    rating: 96,
+                  ),
+                );
+              },
+            ),
+          ),
+          // Разделение
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Детализация филиала
+                  Container(
+                    margin: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(12.0),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0A3A5E),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Филиал в Японии',
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InfoTile(label: 'Заработок в час', value: '1.61K'),
+                            InfoTile(label: 'Бонус к этапам', value: '+100'),
+                            InfoTile(label: 'Убытки в час', value: '0'),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Создание пекарни
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFCD8032),
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                          ),
+                          child: const Text(
+                            'Создать пекарню в другом месте',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Карточки улучшений
+                  ...List.generate(
+                    4,
+                    (index) => BakeryUpgradeCard(
+                      title: index == 0
+                          ? "Пекарь"
+                          : index == 1
+                              ? "Пекарь-кондитер"
+                              : index == 2
+                                  ? "Пекарный аппарат"
+                                  : "Супер пекарь",
+                      count: 10,
+                      profit: '156.92K',
+                      cost: 25,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: const Footer(
         selectedIndex: 4,
@@ -48,29 +113,47 @@ class MarketPage extends StatelessWidget {
   }
 }
 
-class CompanyCard extends StatelessWidget {
-  final Company company;
+class BranchCard extends StatelessWidget {
+  final String location;
+  final int profit;
+  final int level;
+  final int rating;
 
-  const CompanyCard({required this.company, super.key});
+  const BranchCard({
+    super.key,
+    required this.location,
+    required this.profit,
+    required this.level,
+    required this.rating,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final profit = company.breadEarned();
-
     return Card(
-      color: Colors.white10,
-      child: Padding(
+      color: const Color(0xFF1A3D5C),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
         padding: const EdgeInsets.all(8.0),
+        width: 160,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Филиал: ${company.branches.length} объектов',
+              'Филиал в $location',
               style: const TextStyle(color: Colors.white, fontSize: 16),
             ),
+            const SizedBox(height: 8),
             Text(
-              'Прибыль в час: ${profit.toStringAsFixed(1)} монет',
-              style: const TextStyle(color: Colors.white70, fontSize: 14),
+              'Уровень: $level',
+              style: const TextStyle(color: Colors.white70),
+            ),
+            Text(
+              'Рейтинг: $rating%',
+              style: const TextStyle(color: Colors.white70),
+            ),
+            Text(
+              'Прибыль: $profit монет/ч',
+              style: const TextStyle(color: Colors.white70),
             ),
           ],
         ),
@@ -79,98 +162,50 @@ class CompanyCard extends StatelessWidget {
   }
 }
 
-class CreateBakeryPopup extends StatefulWidget {
-  final AbstractProgressManager progressManager;
+class InfoTile extends StatelessWidget {
+  final String label;
+  final String value;
 
-  const CreateBakeryPopup({required this.progressManager, Key? key}) : super(key: key);
-
-  @override
-  State<CreateBakeryPopup> createState() => _CreateBakeryPopupState();
-}
-
-class _CreateBakeryPopupState extends State<CreateBakeryPopup> {
-  int bakeryCount = 1;
-
-  void _increment() {
-    setState(() {
-      bakeryCount++;
-    });
-  }
-
-  void _decrement() {
-    setState(() {
-      if (bakeryCount > 1) bakeryCount--;
-    });
-  }
+  const InfoTile({super.key, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
-    final state = widget.progressManager.getState();
-    final costPerBakery = 9403.0; // Example cost
-    final totalCost = costPerBakery * bakeryCount;
+    return Column(
+      children: [
+        Text(label, style: const TextStyle(color: Colors.white70)),
+        Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
+}
 
-    return Dialog(
+class BakeryUpgradeCard extends StatelessWidget {
+  final String title;
+  final int count;
+  final String profit;
+  final int cost;
+
+  const BakeryUpgradeCard({
+    super.key,
+    required this.title,
+    required this.count,
+    required this.profit,
+    required this.cost,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: const Color(0xFF0A3A5E),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      backgroundColor: const Color(0xFF0A3A5E),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(12.0),
+        title: Text(title, style: const TextStyle(color: Colors.white)),
+        subtitle: Text('Прибыль: $profit', style: const TextStyle(color: Colors.white70)),
+        trailing: Column(
           children: [
-            const Text(
-              'Пекарня в новом месте',
-              style: TextStyle(color: Colors.white, fontSize: 18),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Цена за пекарню:', style: TextStyle(color: Colors.white70)),
-                Text('$costPerBakery монет', style: const TextStyle(color: Colors.white)),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Количество:', style: TextStyle(color: Colors.white70)),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.remove, color: Colors.white),
-                      onPressed: _decrement,
-                    ),
-                    Text('$bakeryCount', style: const TextStyle(color: Colors.white)),
-                    IconButton(
-                      icon: const Icon(Icons.add, color: Colors.white),
-                      onPressed: _increment,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Общая стоимость:', style: TextStyle(color: Colors.white70)),
-                Text('$totalCost монет', style: const TextStyle(color: Colors.white)),
-              ],
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                if (state.decrease(totalCost)) {
-                  widget.progressManager.saveProgress();
-                  Navigator.of(context).pop();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Недостаточно средств!')),
-                  );
-                }
-              },
-              child: const Text('Создать'),
-            ),
+            Text('10x $cost', style: const TextStyle(color: Colors.white)),
+            const Text('монет', style: TextStyle(color: Colors.white70)),
           ],
         ),
       ),

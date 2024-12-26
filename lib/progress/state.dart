@@ -5,7 +5,7 @@ import 'package:nantap/progress/upgrade.dart';
 class GlobalState implements AbstractWallet {
   int level;
   double breadCount;
-  int tapStrength = 0; 
+  double tapStrength = 0; 
   int lvlPrice = 100; 
   double bufferBread = 0; // used for buffer for jumping between levels on home page nothing more. 
   List<Upgrade> upgrades;
@@ -102,5 +102,19 @@ class GlobalState implements AbstractWallet {
     }
 
     return result;
+  }
+
+  double calcTapStrengthBoost() { 
+    double result = 0;
+
+    for (var upgrade in upgrades) {
+      result += upgrade.earnTapStrength();
+    }
+
+    for (var company in companies) {
+      result += company.tapBooster();
+    }
+
+    return result + tapStrength;
   }
 }

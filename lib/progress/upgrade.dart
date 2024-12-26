@@ -10,9 +10,10 @@ class Upgrade {
   double cost;
   int baseEarning;
   int boostedTimes = 0;
+  int? tapStrengthBoost = 0; 
   String imagePath;
 
-  Upgrade(this.upgradeId, this.displayName, this.description, this.cost, this.baseEarning, this.imagePath);
+  Upgrade(this.upgradeId, this.displayName, this.description, this.cost, this.baseEarning, this.imagePath, [this.tapStrengthBoost]);
 
   @override
   bool operator ==(Object other) =>
@@ -22,6 +23,10 @@ class Upgrade {
 
   double earn({int booster = 0}) {
     return ((level * baseEarning) + (booster * boostedTimes)).toDouble();
+  }
+
+  int earnTapStrength() { 
+    return tapStrengthBoost ?? 0 * level; 
   }
 
   double get levelUpPrice => pow((level * cost), 1.4).toDouble();

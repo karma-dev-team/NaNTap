@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
       var state = widget.manager.getState();
 
       // Увеличиваем bufferBread
-      state.bufferBread += state.tapStrength.toDouble();
+      state.bufferBread += state.calcTapStrengthBoost(); 
 
       // Проверяем, если bufferBread достигает стоимости следующего уровня
       if (state.bufferBread >= state.nextLevelPrice()) {
@@ -98,9 +98,9 @@ class _MyHomePageState extends State<MyHomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  buildMenuCard('Earn per tap', '+${state.tapStrength}', 'assets/image/coin.png', Colors.orange, 120),
-                  buildMenuCard('Coins to level up', '${state.nextLevelPrice()}', 'assets/image/coin.png', Colors.blue, 120),
-                  buildMenuCard('Profit per second', '+${state.calcBread()}', 'assets/image/coin.png', Colors.green, 120),
+                  buildMenuCard('Тапов за тап', '+${state.calcTapStrengthBoost()}', 'assets/image/coin.png', Colors.orange, 120),
+                  buildMenuCard('Тапы для уровня', '${state.nextLevelPrice()}', 'assets/image/coin.png', Colors.blue, 120),
+                  buildMenuCard('Тапы в секунду', '+${state.calcBread()}', 'assets/image/coin.png', Colors.green, 120),
                 ],
               ),
               const SizedBox(height: 40),
