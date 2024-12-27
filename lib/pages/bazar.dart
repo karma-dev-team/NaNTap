@@ -1,211 +1,211 @@
 import 'package:flutter/material.dart';
-import 'package:nantap/components/footer.dart';
+import 'package:nantap/progress/company.dart';
+import 'package:nantap/progress/interfaces.dart';
 
 class MarketPage extends StatelessWidget {
-  const MarketPage({super.key});
+  final AbstractProgressManager progressManager;
+
+  MarketPage({required this.progressManager});
 
   @override
   Widget build(BuildContext context) {
+    // Получаем компании из прогресс-менеджера
+    final companies = progressManager.getState().companies;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF07223C),
+      backgroundColor: Colors.blue.shade900,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1D466C),
-        title: const Text(
-          'Филиалы',
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
+        title: Text('Рынок'),
+        backgroundColor: Colors.orange,
       ),
-      body: Column(
-        children: [
-          // Верхняя часть с филиалами
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            height: 120,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 3, // Количество филиалов
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: BranchCard(
-                    location: index == 0 ? "Япония" : index == 1 ? "США" : "Африка",
-                    profit: 12200 + index * 300, // Пример прибыли
-                    level: 13,
-                    rating: 96,
-                  ),
-                );
-              },
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // Список филиалов
+            SizedBox(
+              height: 150,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: companies.length,
+                itemBuilder: (context, index) {
+                  final company = companies[index];
+                  return _buildBranchCard(company);
+                },
+              ),
             ),
-          ),
-          // Разделение
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Детализация филиала
-                  Container(
-                    margin: const EdgeInsets.all(8.0),
-                    padding: const EdgeInsets.all(12.0),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0A3A5E),
-                      borderRadius: BorderRadius.circular(12),
+            SizedBox(height: 20),
+
+            // Детализация филиала
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade800,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      companies.isNotEmpty ? companies[0].name : 'Филиал',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    SizedBox(height: 16),
+                    Expanded(
+                      child: Image.asset(
+                        'assets/images/bakery_image.png', // Замените на ваш путь к изображению
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Филиал в Японии',
-                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        Text(
+                          'Заработок в час: ${_formatProfit(companies.isNotEmpty ? companies[0].breadEarned() : 0.0)}',
+                          style: TextStyle(color: Colors.white, fontSize: 14),
                         ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            InfoTile(label: 'Заработок в час', value: '1.61K'),
-                            InfoTile(label: 'Бонус к этапам', value: '+100'),
-                            InfoTile(label: 'Убытки в час', value: '0'),
-                          ],
+                        Text(
+                          'Бонус к тапам: +100', // Фейковое значение
+                          style: TextStyle(color: Colors.greenAccent, fontSize: 14),
                         ),
-                        const SizedBox(height: 10),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Создание пекарни
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFCD8032),
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                          ),
-                          child: const Text(
-                            'Создать пекарню в другом месте',
-                            style: TextStyle(fontSize: 16),
-                          ),
+                        Text(
+                          'Убытки в час: -60', // Фейковое значение
+                          style: TextStyle(color: Colors.redAccent, fontSize: 14),
                         ),
                       ],
                     ),
-                  ),
-                  // Карточки улучшений
-                  ...List.generate(
-                    4,
-                    (index) => BakeryUpgradeCard(
-                      title: index == 0
-                          ? "Пекарь"
-                          : index == 1
-                              ? "Пекарь-кондитер"
-                              : index == 2
-                                  ? "Пекарный аппарат"
-                                  : "Супер пекарь",
-                      count: 10,
-                      profit: '156.92K',
-                      cost: 25,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: const Footer(
-        selectedIndex: 4,
-      ),
-    );
-  }
-}
 
-class BranchCard extends StatelessWidget {
-  final String location;
-  final int profit;
-  final int level;
-  final int rating;
+            SizedBox(height: 20),
 
-  const BranchCard({
-    super.key,
-    required this.location,
-    required this.profit,
-    required this.level,
-    required this.rating,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: const Color(0xFF1A3D5C),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Container(
-        padding: const EdgeInsets.all(8.0),
-        width: 160,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Филиал в $location',
-              style: const TextStyle(color: Colors.white, fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Уровень: $level',
-              style: const TextStyle(color: Colors.white70),
-            ),
-            Text(
-              'Рейтинг: $rating%',
-              style: const TextStyle(color: Colors.white70),
-            ),
-            Text(
-              'Прибыль: $profit монет/ч',
-              style: const TextStyle(color: Colors.white70),
+            // Кнопка создания нового филиала
+            ElevatedButton(
+              onPressed: () {
+                _showNewBranchModal(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+              ),
+              child: Text(
+                'Создать пекарню в другом месте',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
             ),
           ],
         ),
       ),
     );
   }
-}
 
-class InfoTile extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const InfoTile({super.key, required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(label, style: const TextStyle(color: Colors.white70)),
-        Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-      ],
+  Widget _buildBranchCard(Company company) {
+    return Container(
+      width: 200,
+      margin: const EdgeInsets.only(right: 16),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade800,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Text(
+            company.name,
+            style: TextStyle(color: Colors.white, fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Уровень: ${company.branches.length}', // Используем количество филиалов как уровень
+            style: TextStyle(color: Colors.white70, fontSize: 14),
+          ),
+          Text(
+            'Рейтинг: 96%', // Фейковое значение
+            style: TextStyle(color: Colors.white70, fontSize: 14),
+          ),
+          Text(
+            'Прибыль: ${_formatProfit(company.breadEarned())}к/ч',
+            style: TextStyle(color: Colors.greenAccent, fontSize: 14),
+          ),
+          Text(
+            'Расходы: -2.2к/ч', // Фейковое значение
+            style: TextStyle(color: Colors.redAccent, fontSize: 14),
+          ),
+        ],
+      ),
     );
   }
-}
 
-class BakeryUpgradeCard extends StatelessWidget {
-  final String title;
-  final int count;
-  final String profit;
-  final int cost;
+  String _formatProfit(double profit) {
+    if (profit > 1000) {
+      return '${(profit / 1000).toStringAsFixed(1)}К';
+    }
+    return profit.toStringAsFixed(1);
+  }
 
-  const BakeryUpgradeCard({
-    super.key,
-    required this.title,
-    required this.count,
-    required this.profit,
-    required this.cost,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: const Color(0xFF0A3A5E),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(12.0),
-        title: Text(title, style: const TextStyle(color: Colors.white)),
-        subtitle: Text('Прибыль: $profit', style: const TextStyle(color: Colors.white70)),
-        trailing: Column(
+  void _showNewBranchModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text('10x $cost', style: const TextStyle(color: Colors.white)),
-            const Text('монет', style: TextStyle(color: Colors.white70)),
+            Text(
+              'Создать новый филиал',
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              dropdownColor: Colors.blue.shade800,
+              items: ['Япония', 'США', 'Казахстан']
+                  .map((region) => DropdownMenuItem<String>(
+                        value: region,
+                        child: Text(
+                          region,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ))
+                  .toList(),
+              onChanged: (value) {},
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.blue.shade700,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                hintText: 'Выберите регион',
+                hintStyle: TextStyle(color: Colors.white70),
+              ),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'Подтвердить',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
           ],
         ),
       ),

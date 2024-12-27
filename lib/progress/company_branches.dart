@@ -24,6 +24,14 @@ class CompanyBranches implements MoneyEarner {
     return result;
   }
 
+  void levelUpUpgrade(String upgradeId, int levels) { 
+    for (var upg in upgrades) { 
+      if (upg.upgradeId == upgradeId) { 
+        upg.level += levels; 
+      }
+    }
+  }
+
   @override
   double tapBooster() {
     double result = 0;
