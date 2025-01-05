@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nantap/components/companiesList.dart';
+import 'package:nantap/components/footer.dart';
 import 'package:nantap/progress/company.dart';
 import 'package:nantap/progress/interfaces.dart';
 
@@ -22,6 +24,7 @@ class MarketPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            CompaniesComponent(progressManager: progressManager),
             // Список филиалов
             SizedBox(
               height: 150,
@@ -54,7 +57,7 @@ class MarketPage extends StatelessWidget {
                     SizedBox(height: 16),
                     Expanded(
                       child: Image.asset(
-                        'assets/images/bakery_image.png', // Замените на ваш путь к изображению
+                        'assets/image/bakery_image.png', // Замените на ваш путь к изображению
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -103,6 +106,7 @@ class MarketPage extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const Footer(selectedIndex: 2),
     );
   }
 
