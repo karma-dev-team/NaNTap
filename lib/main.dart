@@ -15,6 +15,7 @@ import 'package:nantap/progress/achievment_manager.dart';
 import 'package:nantap/progress/interfaces.dart';
 import 'package:nantap/progress/jsonstorage.dart';
 import 'package:nantap/progress/manager.dart';
+import 'package:nantap/progress/progressManagerData.dart';
 import 'package:nantap/progress/storage.dart';
 import 'package:nantap/progress/upgradesList.dart';
 import 'package:nantap/progress/webjsonstorage.dart';
@@ -34,6 +35,7 @@ void main() async {
 
   var progressManager = ProgressManager(storage, achievementManager);
 
+  setupCompaniesData(progressManager); 
   setupUpgradesRegistry(progressManager.getUpgradesRegistry());
 
   runApp(MyApp(progressManager: progressManager, isTestMode: true));

@@ -15,7 +15,7 @@ class MarketPage extends StatelessWidget {
     final companies = progressManager.getState().companies;
 
     return Scaffold(
-      backgroundColor: Colors.blue.shade900,
+      backgroundColor: const Color(0xFF07223C),
       appBar: AppBar(
         title: Text('Рынок'),
         backgroundColor: Colors.orange,
@@ -25,18 +25,6 @@ class MarketPage extends StatelessWidget {
         child: Column(
           children: [
             CompaniesComponent(progressManager: progressManager),
-            // Список филиалов
-            SizedBox(
-              height: 150,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: companies.length,
-                itemBuilder: (context, index) {
-                  final company = companies[index];
-                  return _buildBranchCard(company);
-                },
-              ),
-            ),
             SizedBox(height: 20),
 
             // Детализация филиала
@@ -44,7 +32,7 @@ class MarketPage extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade800,
+                  color: const Color(0xFF1D466C),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -116,7 +104,7 @@ class MarketPage extends StatelessWidget {
       margin: const EdgeInsets.only(right: 16),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.blue.shade800,
+        color: const Color(0xFF1D466C),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -159,6 +147,7 @@ class MarketPage extends StatelessWidget {
   void _showNewBranchModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: const Color(0xFF1D466C),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
       ),
@@ -173,7 +162,7 @@ class MarketPage extends StatelessWidget {
             ),
             SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              dropdownColor: Colors.blue.shade800,
+              dropdownColor: const Color(0xFF1D466C),
               items: ['Япония', 'США', 'Казахстан']
                   .map((region) => DropdownMenuItem<String>(
                         value: region,
