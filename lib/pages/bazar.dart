@@ -3,16 +3,16 @@ import 'package:nantap/components/companiesList.dart';
 import 'package:nantap/components/footer.dart';
 import 'package:nantap/progress/company.dart';
 import 'package:nantap/progress/interfaces.dart';
+import 'package:nantap/progress/upgrade.dart';
 
 class MarketPage extends StatelessWidget {
   final AbstractProgressManager progressManager;
 
   MarketPage({required this.progressManager});
-
   @override
   Widget build(BuildContext context) {
-    // Получаем компании из прогресс-менеджера
     final companies = progressManager.getState().companies;
+    final upgrades = progressManager.getUpgradesRegistry().getUpgrades().toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFF07223C),
@@ -29,50 +29,55 @@ class MarketPage extends StatelessWidget {
 
             // Детализация филиала
             Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1D466C),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      companies.isNotEmpty ? companies[0].name : 'Филиал',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    SizedBox(height: 16),
-                    Expanded(
-                      child: Image.asset(
-                        'assets/image/bakery_image.png', // Замените на ваш путь к изображению
-                        fit: BoxFit.cover,
+              child: companies.isNotEmpty
+                  ? Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1D466C),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Название компании
+                          Text(
+                            companies[0].name,
+                            style: const TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Информация о доходах и бонусах
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Заработок в час: ${_formatProfit(companies[0].breadEarned())}',
+                                style: const TextStyle(color: Colors.white, fontSize: 14),
+                              ),
+                              const Text(
+                                'Бонус к тапам: +100', // Замените на реальное значение
+                                style: TextStyle(color: Colors.greenAccent, fontSize: 14),
+                              ),
+                              const Text(
+                                'Убытки в час: -60', // Замените на реальное значение
+                                style: TextStyle(color: Colors.redAccent, fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                  : const Center(
+                      child: Text(
+                        'Нет выбранной компании',
+                        style: TextStyle(color: Colors.white70, fontSize: 18),
                       ),
                     ),
-                    SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Заработок в час: ${_formatProfit(companies.isNotEmpty ? companies[0].breadEarned() : 0.0)}',
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        ),
-                        Text(
-                          'Бонус к тапам: +100', // Фейковое значение
-                          style: TextStyle(color: Colors.greenAccent, fontSize: 14),
-                        ),
-                        Text(
-                          'Убытки в час: -60', // Фейковое значение
-                          style: TextStyle(color: Colors.redAccent, fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
             ),
+            const SizedBox(height: 20),
 
-            SizedBox(height: 20),
+            // Меню апгрейдов
+            if (companies.isNotEmpty) _buildUpgradeMenu(companies[0], upgrades),
 
             // Кнопка создания нового филиала
             ElevatedButton(
@@ -95,6 +100,106 @@ class MarketPage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: const Footer(selectedIndex: 2),
+    );
+  }
+
+  Widget _buildUpgradeMenu(Company selectedCompany, List<Upgrade> upgrades) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Buy/Sell and Multipliers Section
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1D466C),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildActionButton('Купить'),
+                _buildMultiplierButton('1x'),
+                _buildMultiplierButton('10x'),
+                _buildMultiplierButton('100x'),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Upgrades List
+          SizedBox(
+            height: 400,
+            child: upgrades.isNotEmpty
+                ? ListView(
+                    children: upgrades.map((upgrade) {
+                      return _buildUpgradeCard(upgrade, selectedCompany);
+                    }).toList(),
+                  )
+                : Center(
+                    child: Text(
+                      'Нет доступных улучшений',
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUpgradeCard(Upgrade upgrade, Company company) {
+    return Card(
+      color: const Color(0xFF1D466C),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        title: Text(
+          upgrade.displayName,
+          style: TextStyle(color: Colors.white),
+        ),
+        subtitle: Text(
+          'Цена: ${upgrade.cost} хлеба\nУровень: ${upgrade.level}',
+          style: TextStyle(color: Colors.white70),
+        ),
+        trailing: ElevatedButton(
+          onPressed: () {
+            // Обработка покупки апгрейда для текущей компании
+            progressManager.levelUpUpgrade(upgrade.upgradeId, 1);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+          child: Text('Улучшить'),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton(String label) {
+    return ElevatedButton(
+      onPressed: () {
+        // Обработка кнопки действия
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.orange,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      child: Text(label, style: TextStyle(color: Colors.white)),
+    );
+  }
+
+  Widget _buildMultiplierButton(String label) {
+    return ElevatedButton(
+      onPressed: () {
+        // Обработка выбора множителя
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue.shade700,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      child: Text(label, style: TextStyle(color: Colors.white)),
     );
   }
 
