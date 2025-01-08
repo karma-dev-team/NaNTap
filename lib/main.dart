@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:nantap/firebase_options.dart';
 import 'package:nantap/pages/acievments.dart';
+import 'package:nantap/pages/statistics.dart';
 import 'package:nantap/pages/auth.dart';
 import 'package:nantap/pages/bazar.dart';
 import 'package:nantap/pages/friends.dart';
@@ -18,7 +19,7 @@ import 'package:nantap/progress/manager.dart';
 import 'package:nantap/progress/progressManagerData.dart';
 import 'package:nantap/progress/storage.dart';
 import 'package:nantap/progress/upgradesList.dart';
-import 'package:nantap/progress/webjsonstorage.dart';
+// import 'package:nantap/progress/webjsonstorage.dart';  // JSON STORAGE FOR WEB VERSION
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -28,7 +29,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  var storage = WebJsonStorageAdapter();
+  var storage = SQLiteStorage();
   var achievementManager = AchievmentManager(storage);
 
   await storage.setup(); 
@@ -95,7 +96,8 @@ class _MyAppState extends State<MyApp> {
         '/bazar': (context) => MarketPage(progressManager: manager),
         '/friends': (context) => FriendsPage(),
         '/profile': (context) => ProfilePage(progressManager: manager),
-        '/achivments': (context) => AchievementsPage()
+        '/achivments': (context) => AchievementsPage(),
+        '/statistics': (context) => StatisticsPage(state: manager.getState())
       },
     );
   }

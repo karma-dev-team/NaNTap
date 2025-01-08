@@ -12,7 +12,7 @@ class SQLiteStorage implements AbstractStorage {
   @override
   Future<void> setup() async {
     // Инициализация databaseFactory для sqflite_common_ffi
-    databaseFactory = databaseFactoryFfiWeb; 
+    // databaseFactory = databaseFactoryFfi;
 
     // Получаем путь к базе данных
     var databasesPath = await getDatabasesPath();

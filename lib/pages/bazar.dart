@@ -22,81 +22,81 @@ class MarketPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            CompaniesComponent(progressManager: progressManager),
-            SizedBox(height: 20),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              CompaniesComponent(progressManager: progressManager),
+              SizedBox(height: 20),
 
-            // Детализация филиала
-            Expanded(
-              child: companies.isNotEmpty
+              // Детализация филиала
+              companies.isNotEmpty
                   ? Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1D466C),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Название компании
-                          Text(
-                            companies[0].name,
-                            style: const TextStyle(color: Colors.white, fontSize: 18),
-                          ),
-                          const SizedBox(height: 16),
-
-                          // Информация о доходах и бонусах
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Заработок в час: ${_formatProfit(companies[0].breadEarned())}',
-                                style: const TextStyle(color: Colors.white, fontSize: 14),
-                              ),
-                              const Text(
-                                'Бонус к тапам: +100', // Замените на реальное значение
-                                style: TextStyle(color: Colors.greenAccent, fontSize: 14),
-                              ),
-                              const Text(
-                                'Убытки в час: -60', // Замените на реальное значение
-                                style: TextStyle(color: Colors.redAccent, fontSize: 14),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  : const Center(
-                      child: Text(
-                        'Нет выбранной компании',
-                        style: TextStyle(color: Colors.white70, fontSize: 18),
-                      ),
-                    ),
-            ),
-            const SizedBox(height: 20),
-
-            // Меню апгрейдов
-            if (companies.isNotEmpty) _buildUpgradeMenu(companies[0], upgrades),
-
-            // Кнопка создания нового филиала
-            ElevatedButton(
-              onPressed: () {
-                _showNewBranchModal(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                shape: RoundedRectangleBorder(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1D466C),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Название компании
+                    Text(
+                      companies[0].name,
+                      style: const TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Информация о доходах и бонусах
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Заработок в час: ${_formatProfit(companies[0].breadEarned())}',
+                          style: const TextStyle(color: Colors.white, fontSize: 14),
+                        ),
+                        const Text(
+                          'Бонус к тапам: +100', // Замените на реальное значение
+                          style: TextStyle(color: Colors.greenAccent, fontSize: 14),
+                        ),
+                        const Text(
+                          'Убытки в час: -60', // Замените на реальное значение
+                          style: TextStyle(color: Colors.redAccent, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )
+                  : const Center(
+                child: Text(
+                  'Нет выбранной компании',
+                  style: TextStyle(color: Colors.white70, fontSize: 18),
+                ),
               ),
-              child: Text(
-                'Создать пекарню в другом месте',
-                style: TextStyle(color: Colors.white, fontSize: 16),
+              const SizedBox(height: 20),
+
+              // Меню апгрейдов
+              if (companies.isNotEmpty) _buildUpgradeMenu(companies[0], upgrades),
+
+              // Кнопка создания нового филиала
+              ElevatedButton(
+                onPressed: () {
+                  _showNewBranchModal(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                ),
+                child: Text(
+                  'Создать пекарню в другом месте',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: const Footer(selectedIndex: 2),
@@ -128,20 +128,21 @@ class MarketPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           // Upgrades List
-          SizedBox(
-            height: 400,
-            child: upgrades.isNotEmpty
-                ? ListView(
-                    children: upgrades.map((upgrade) {
-                      return _buildUpgradeCard(upgrade, selectedCompany);
-                    }).toList(),
-                  )
-                : Center(
-                    child: Text(
-                      'Нет доступных улучшений',
-                      style: TextStyle(color: Colors.white70, fontSize: 16),
-                    ),
-                  ),
+          ListView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            children: upgrades.isNotEmpty
+                ? upgrades.map((upgrade) {
+              return _buildUpgradeCard(upgrade, selectedCompany);
+            }).toList()
+                : [
+              Center(
+                child: Text(
+                  'Нет доступных улучшений',
+                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -270,12 +271,12 @@ class MarketPage extends StatelessWidget {
               dropdownColor: const Color(0xFF1D466C),
               items: ['Япония', 'США', 'Казахстан']
                   .map((region) => DropdownMenuItem<String>(
-                        value: region,
-                        child: Text(
-                          region,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ))
+                value: region,
+                child: Text(
+                  region,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ))
                   .toList(),
               onChanged: (value) {},
               decoration: InputDecoration(

@@ -206,9 +206,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           icon: Icons.settings,
                           label: "Настройки",
                         ),
-                        const ProfileNavigationItem(
+                        ProfileInfoRow(
                           icon: Icons.bar_chart,
                           label: "Статистика",
+                          isNavigable: true,
+                          onTap: () {
+                            Navigator.pushReplacementNamed(context, '/statistics');
+                          },
                         ),
                       ],
                     ),
@@ -242,7 +246,7 @@ class ProfileInfoRow extends StatelessWidget {
     Key? key,
     required this.icon,
     required this.label,
-    required this.value,
+    this.value="",
     this.isNavigable = false,
     this.isEditing = false,
     this.onSave,
