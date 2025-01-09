@@ -6,10 +6,13 @@ class AchievementsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A2E47),
-        title: const Text('Достижения'),
+        title: const Text(
+          'Достижения',
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pushReplacementNamed(context, '/profile');
           },

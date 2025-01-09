@@ -11,10 +11,13 @@ class StatisticsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A2E47),
-        title: const Text('Статистика'),
+        title: const Text(
+          'Статистику',
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pushReplacementNamed(context, '/profile');
           },

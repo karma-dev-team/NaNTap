@@ -94,7 +94,10 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF07223C),
-        title: const Text("Профиль"),
+        title: const Text(
+          'Профиль',
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -201,15 +204,16 @@ class _ProfilePageState extends State<ProfilePage> {
                             Navigator.pushReplacementNamed(context, '/achivments');
                           },
                         ),
-                        const SizedBox(height: 20),
-                        const ProfileNavigationItem(
+                        ProfileNavigationItem(
                           icon: Icons.settings,
                           label: "Настройки",
+                          onTap: () {
+                            Navigator.pushReplacementNamed(context, '/settings');
+                          },
                         ),
-                        ProfileInfoRow(
+                        ProfileNavigationItem(
                           icon: Icons.bar_chart,
                           label: "Статистика",
-                          isNavigable: true,
                           onTap: () {
                             Navigator.pushReplacementNamed(context, '/statistics');
                           },
@@ -312,39 +316,45 @@ class ProfileInfoRow extends StatelessWidget {
     );
   }
 }
+
 class ProfileNavigationItem extends StatelessWidget {
   final IconData icon;
   final String label;
+  final Function()? onTap; // Новый параметр
 
   const ProfileNavigationItem({
     Key? key,
     required this.icon,
     required this.label,
+    this.onTap, // Инициализация нового параметра
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.orange),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
+    return GestureDetector(
+      onTap: onTap, // Реализация onTap
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.orange),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
               ),
             ),
-          ),
-          const Icon(
-            Icons.arrow_forward_ios,
-            color: Colors.orange,
-            size: 16,
-          ),
-        ],
+            const Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.orange,
+              size: 16,
+            ),
+          ],
+        ),
       ),
     );
   }
