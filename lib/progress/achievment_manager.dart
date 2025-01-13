@@ -23,7 +23,7 @@ class AchievmentManager implements AbstractAchievmentManager {
   }
 
   Future<void> restoreAchievements() async {
-    Map<String, Object> savedData = await storage.extractData();
+    Map<String, dynamic> savedData = await storage.extractData();
 
     var achievementList = savedData['achievements'] as List<dynamic>;
     for (var achData in achievementList) {

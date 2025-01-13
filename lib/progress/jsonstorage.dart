@@ -1,79 +1,71 @@
-import 'dart:convert';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+import 'package:json_store/json_store.dart';
 import 'package:nantap/progress/interfaces.dart';
 
-class JsonStorageAdapter implements AbstractStorage {
-  late File _jsonFile;
-  late Map<String, dynamic> _storage;
+class JsonStorage implements AbstractStorage {
+  final JsonStore _store = JsonStore();
+  final String keyPrefix;
 
-  // Инициализация JSON-хранилища
+  JsonStorage({this.keyPrefix = ''}); // Можно указать префикс ключей, например, "messages-".
+
   @override
   Future<void> setup() async {
-    final directory = await getApplicationDocumentsDirectory();
-    _jsonFile = File('${directory.path}/storage.json');
+    // json_store не требует явной настройки.
+  }
 
-    // Если файл не существует, создаём его с пустым JSON
-    if (await _jsonFile.exists()) {
-      final content = await _jsonFile.readAsString();
-      _storage = jsonDecode(content);
-    } else {
-      _storage = {};
-      await _saveToFile();
+  @override
+  Future<void> saveData(Map<String, dynamic> data) async {
+    // Сохраняем данные с использованием префикса.
+    for (var key in data.keys) {
+      await _store.setItem('$keyPrefix$key', data[key]);
     }
   }
 
-  // Получение данных в сыром виде по ключу
   @override
-  Future<String> getRaw(String key) async {
-    return jsonEncode(_storage[key] ?? '');
-  }
+  Future<Map<String, dynamic>> extractData() async {
+    // Получаем все данные, соответствующие шаблону ключей.
+    final List<Map<String, dynamic>> jsonList = await _store.getListLike('$keyPrefix%') ?? [];
+    Map<String, dynamic> allData = {};
 
-  // Экспорт всех данных в сыром виде
-  @override
-  Future<String> extractRaw() async {
-    return jsonEncode(_storage);
-  }
-
-  // Сохранение нескольких пар ключ-значение
-  @override
-  Future<void> saveData(Map<String, Object> data) async {
-    _storage.addAll(data);
-    await _saveToFile();
-  }
-
-  // Извлечение всех данных
-  @override
-  Future<Map<String, Object>> extractData() async {
-    return Map<String, Object>.from(_storage);
-  }
-
-  // Получение данных по ключу
-  @override
-  Future<Map<String, Object>> get(String key) async {
-    if (_storage.containsKey(key)) {
-      return Map<String, Object>.from(_storage[key]);
+    for (var item in jsonList) {
+      if (item.containsKey('_id')) {
+        // Извлекаем ключ из служебного поля `_id`.
+        String key = item['_id'];
+        allData[key.replaceFirst(keyPrefix, '')] = item..remove('_id');
+      }
     }
-    return {};
+
+    return allData;
   }
 
-  // Установка данных по ключу
   @override
-  Future<void> set(String key, Map<String, Object> data) async {
-    _storage[key] = data;
-    await _saveToFile();
+  Future<Map<String, dynamic>> get(String key) async {
+    // Получаем элемент по ключу с учётом префикса.
+    return (await _store.getItem('$keyPrefix$key')) ?? {};
   }
 
-  // Удаление данных по ключу
+  @override
+  Future<void> set(String key, Map<String, dynamic> data) async {
+    // Устанавливаем элемент с ключом и префиксом.
+    await _store.setItem('$keyPrefix$key', data);
+  }
+
   @override
   Future<void> remove(String key) async {
-    _storage.remove(key);
-    await _saveToFile();
+    // Удаляем элемент по ключу с учётом префикса.
+    await _store.deleteItem('$keyPrefix$key');
   }
 
-  // Сохранение данных в файл
-  Future<void> _saveToFile() async {
-    final content = jsonEncode(_storage);
-    await _jsonFile.writeAsString(content);
+  @override
+  Future<String> getRaw(String key) async {
+    // Получаем "сырые" данные по ключу.
+    final data = await _store.getItem('$keyPrefix$key');
+    return data != null ? data.toString() : '';
+  }
+
+  @override
+  Future<String> extractRaw() async {
+    // Извлекаем все данные в сыром виде.
+    final extractedData = await extractData();
+    return extractedData.toString();
   }
 }

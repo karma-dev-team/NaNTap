@@ -18,11 +18,7 @@ import 'package:nantap/progress/interfaces.dart';
 import 'package:nantap/progress/jsonstorage.dart';
 import 'package:nantap/progress/manager.dart';
 import 'package:nantap/progress/progressManagerData.dart';
-import 'package:nantap/progress/storage.dart';
 import 'package:nantap/progress/upgradesList.dart';
-import 'package:nantap/progress/webjsonstorage.dart';  // JSON STORAGE FOR WEB VERSION
-import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
-import 'package:sqflite/sqflite.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,7 +27,7 @@ void main() async {
   );
 
   // var storage = SQLiteStorage();
-  var storage = WebJsonStorageAdapter();
+  var storage = JsonStorage();
   var achievementManager = AchievmentManager(storage);
 
   await storage.setup(); 
@@ -53,8 +49,7 @@ class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState(progressManager, isTestMode);
 }
-
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final AbstractProgressManager manager;
   final bool isTestMode;
 
@@ -65,12 +60,38 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this); // Подписываемся на события жизненного цикла приложения
     if (!isTestMode) {
       _checkAuthState();
     } else {
       setState(() {
         _user = null;
       });
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // Отписываемся при удалении виджета
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.inactive || state == AppLifecycleState.detached) {
+      // Приложение закрывается или сворачивается.
+      _saveProgressData();
+    }
+  }
+
+  Future<void> _saveProgressData() async {
+    try {
+      await manager.saveProgress(); // Предполагается, что метод `save` сохраняет прогресс в хранилище.
+      print("Прогресс сохранён успешно.");
+    } catch (e) {
+      print("Ошибка при сохранении прогресса: $e");
     }
   }
 
@@ -105,6 +126,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
 
 class MainApp extends StatefulWidget {
   final AbstractProgressManager manager;
