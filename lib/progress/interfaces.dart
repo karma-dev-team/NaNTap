@@ -49,16 +49,24 @@ abstract class AbstractAchievment {
   AbstractAchievment? fromJson(Map<String, Object> data);  
 }
 
-abstract class AbstractStorage { 
-  Future<void> setup(); 
-  Future<void> saveData(Map<String, Object> data); 
-  Future<Map<String, Object>> extractData(); 
-  Future<Map<String, Object>> get(String key); 
-  Future<void> set(String key, Map<String, Object> data); 
-  Future<void> remove(String key); 
+abstract class AbstractStorage {
+  Future<void> setup();
+
+  Future<void> saveData(Map<String, dynamic> data);
+
+  Future<Map<String, dynamic>> extractData();
+
+  Future<Map<String, dynamic>> get(String key);
+
+  Future<void> set(String key, Map<String, dynamic> data);
+
+  Future<void> remove(String key);
+
   Future<String> getRaw(String key);
-  Future<String> extractRaw();  
+
+  Future<String> extractRaw();
 }
+
 
 abstract class MoneyEarner { 
   double breadEarned();
