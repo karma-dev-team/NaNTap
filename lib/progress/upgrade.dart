@@ -10,14 +10,23 @@ class Upgrade {
   double cost;
   int baseEarning;
   int boostedTimes = 0;
-  int? tapStrengthBoost = 0; 
+  int? tapStrengthBoost = 0;
   String imagePath;
 
-  Upgrade(this.upgradeId, this.displayName, this.description, this.cost, this.baseEarning, this.imagePath, [this.tapStrengthBoost]);
+  Upgrade(
+    this.upgradeId,
+    this.displayName,
+    this.description,
+    this.cost,
+    this.baseEarning,
+    this.imagePath, [
+    this.tapStrengthBoost,
+  ]);
 
   @override
   bool operator ==(Object other) =>
       other is Upgrade && upgradeId == other.upgradeId;
+
   @override
   int get hashCode => Object.hash(upgradeId, displayName);
 
@@ -25,8 +34,8 @@ class Upgrade {
     return ((level * baseEarning) + (booster * boostedTimes)).toDouble();
   }
 
-  int earnTapStrength() { 
-    return tapStrengthBoost ?? 0 * level; 
+  int earnTapStrength() {
+    return tapStrengthBoost ?? 0 * level;
   }
 
   double get levelUpPrice => pow((level * cost), 1.4).toDouble();
@@ -47,8 +56,37 @@ class Upgrade {
     var cost = double.parse(data['cost'].toString());
     var baseEarning = int.parse(data['baseEarning'].toString());
     var imagePath = data['imagePath'].toString();
-    var upgrade = Upgrade(upgradeId, displayName, description, cost, baseEarning, imagePath);
+    var tapStrengthBoost = data['tapStrengthBoost'] != null
+        ? int.parse(data['tapStrengthBoost'].toString())
+        : null;
+
+    var upgrade = Upgrade(
+      upgradeId,
+      displayName,
+      description,
+      cost,
+      baseEarning,
+      imagePath,
+      tapStrengthBoost,
+    );
+
+    upgrade.level = int.parse(data['level'].toString());
+    upgrade.boostedTimes = int.parse(data['boostedTimes'].toString());
 
     return upgrade;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'upgradeId': upgradeId,
+      'displayName': displayName,
+      'description': description,
+      'level': level,
+      'cost': cost,
+      'baseEarning': baseEarning,
+      'boostedTimes': boostedTimes,
+      'tapStrengthBoost': tapStrengthBoost,
+      'imagePath': imagePath,
+    };
   }
 }

@@ -6,6 +6,7 @@ class CompanyBranches implements MoneyEarner {
 
   CompanyBranches(this.upgrades);
 
+  // Factory constructor to create an instance from JSON
   factory CompanyBranches.fromJson(Map<String, dynamic> json) {
     var upgradesFromJson = json['upgrades'] as List<dynamic>;
     List<Upgrade> upgrades = upgradesFromJson.map((upgradeJson) => Upgrade.fromJson(upgradeJson)).toList();
@@ -24,10 +25,10 @@ class CompanyBranches implements MoneyEarner {
     return result;
   }
 
-  void levelUpUpgrade(String upgradeId, int levels) { 
-    for (var upg in upgrades) { 
-      if (upg.upgradeId == upgradeId) { 
-        upg.level += levels; 
+  void levelUpUpgrade(String upgradeId, int levels) {
+    for (var upg in upgrades) {
+      if (upg.upgradeId == upgradeId) {
+        upg.level += levels;
       }
     }
   }
@@ -41,5 +42,12 @@ class CompanyBranches implements MoneyEarner {
     }
 
     return result;
+  }
+
+  // Convert CompanyBranches to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'upgrades': upgrades.map((upgrade) => upgrade.toJson()).toList(),
+    };
   }
 }

@@ -8,7 +8,7 @@ import 'package:nantap/progress/upgrade.dart';
 import 'package:nantap/progress/upgrades_registry.dart';
 
 class ProgressManager implements AbstractProgressManager {
-  GlobalState state = new GlobalState(0, 0, [], [], []);
+  GlobalState state = new GlobalState(0, 0, [], [], [], "");
   AbstractStorage storage;
   AbstractAchievmentManager achievementManager;
   AbstractUpgradesRegistry upgradesRegistry = UpgradesRegistry({});
