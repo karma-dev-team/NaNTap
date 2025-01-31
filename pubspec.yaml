@@ -41,7 +41,7 @@ dependencies:
   mockito: ^5.4.0
   sqflite_common_ffi: ^2.3.0
   sqflite_common_ffi_web: ^0.4.5
-  path_provider: ^2.0.11
+  path_provider: ^2.1.1
   json_store:
   shared_preferences: ^2.0.15
 

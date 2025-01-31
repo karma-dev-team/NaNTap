@@ -16,33 +16,10 @@ import 'package:nantap/components/footer.dart';
 import 'package:nantap/progress/achievment_manager.dart';
 import 'package:nantap/progress/interfaces.dart';
 import 'package:nantap/progress/jsonstorage.dart';
-import 'package:nantap/progress/manager.dart';
-import 'package:nantap/progress/progressManagerData.dart';
-import 'package:nantap/progress/upgradesList.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-/// Helper class for local storage using shared_preferences
-class LocalStorage {
-  static const String userIdKey = 'userId';
-
-  // Save the userId locally
-  static Future<void> saveUserId(String userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(userIdKey, userId);
-  }
-
-  // Load the userId from local storage
-  static Future<String?> loadUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(userIdKey);
-  }
-
-  // Clear the userId from local storage
-  static Future<void> clearUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(userIdKey);
-  }
-}
+import 'package:nantap/progress/progress_manager.dart';
+import 'package:nantap/progress/progress_manager_data.dart';
+import 'package:nantap/progress/upgrades_list.dart';
+import 'package:nantap/progress/local_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -123,12 +100,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future<void> _saveProgressData() async {
-    try {
-      await manager.saveProgress();
-      print("Progress saved successfully.");
-    } catch (e) {
-      print("Error saving progress: $e");
-    }
+    await manager.saveProgress();
+    print("Progress saved successfully.");
+    
   }
 
   void _checkAuthState() {

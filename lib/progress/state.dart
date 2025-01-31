@@ -3,7 +3,7 @@ import 'package:nantap/progress/interfaces.dart';
 import 'package:nantap/progress/upgrade.dart';
 
 class GlobalState implements AbstractWallet {
-  int level;
+  double level;
   String userId; // User ID for Firestore integration
   double breadCount;
   double tapStrength = 0;
@@ -75,7 +75,7 @@ class GlobalState implements AbstractWallet {
     List<String> achievements = List<String>.from(json['achievements'] ?? []);
 
     return GlobalState(
-      json['level'] as int,
+      (json['level'] as num).toDouble(),
       (json['breadCount'] as num).toDouble(),
       upgrades,
       companies,
@@ -87,15 +87,15 @@ class GlobalState implements AbstractWallet {
   // Convert GlobalState to JSON for saving to Firestore
   Map<String, dynamic> toJson() {
     return {
-      'level': level,
-      'userId': userId,
-      'breadCount': breadCount,
-      'tapStrength': tapStrength,
-      'lvlPrice': lvlPrice,
-      'bufferBread': bufferBread,
-      'upgrades': upgrades.map((e) => e.toJson()).toList(),
-      'companies': companies.map((e) => e.toJson()).toList(),
-      'achievements': achievements,
+      'level': level.toString(), 
+      'userId': userId, 
+      'breadCount': breadCount, // double
+      'tapStrength': tapStrength, // double
+      'lvlPrice': lvlPrice, // int
+      'bufferBread': bufferBread, // double
+      'upgrades': upgrades.map((e) => e.toJson()).toList(), // Список Map
+      'companies': companies.map((e) => e.toJson()).toList(), // Список Map
+      'achievements': achievements, // Список строк
     };
   }
 

@@ -109,14 +109,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   Column(
                     children: [
-                      Text(
-                        '${state.getBufferAmountShortend()}',
-                        style: const TextStyle(
-                          fontSize: 50.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
                       const SizedBox(height: 10),
                       Text(
                         'Реальный баланс: ${state.humanize(state.breadCount)}',

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nantap/components/footer.dart';
-import 'package:nantap/progress/referallManager.dart';
+import 'package:nantap/progress/referal_manager.dart';
 import 'package:nantap/progress/state.dart';
 
 class FriendsPage extends StatelessWidget {
@@ -120,6 +120,7 @@ class FriendsPage extends StatelessWidget {
           );
         },
       ),
+      bottomNavigationBar: const Footer(selectedIndex: 3),
     );
   }
 }

@@ -8,7 +8,7 @@ import 'package:nantap/progress/upgrade.dart';
 import 'package:nantap/progress/upgrades_registry.dart';
 
 class ProgressManager implements AbstractProgressManager {
-  GlobalState state = new GlobalState(0, 0, [], [], [], "");
+  GlobalState state = new GlobalState(2, 3, [], [], [], "");
   AbstractStorage storage;
   AbstractAchievmentManager achievementManager;
   AbstractUpgradesRegistry upgradesRegistry = UpgradesRegistry({});
@@ -36,25 +36,7 @@ class ProgressManager implements AbstractProgressManager {
   @override
   Future<void> saveProgress() async {
     // Save the current state to storage
-    await storage.saveData({
-      'level': state.level,
-      'breadCount': state.breadCount,
-      'upgrades': state.upgrades.map((u) => {
-        'upgradeId': u.upgradeId,
-        'level': u.level,
-        'baseEarning': u.baseEarning,
-        'cost': u.cost,
-        'description': u.description,
-        'displayName': u.displayName
-      }).toList(),
-      'companies': state.companies.map((c) => {
-        'upgrades': c.upgrades.map((u) => u.upgradeId).toList(),
-        'branches': c.branches.map((b) => {
-          'upgrades': b.upgrades.map((u) => u.upgradeId).toList(),
-        }).toList(),
-      }).toList(),
-      'achievements': state.achievements,
-    });
+    await storage.saveData(state.toJson());
   }
 
   @override
@@ -105,7 +87,7 @@ class ProgressManager implements AbstractProgressManager {
     var savedData = await storage.extractData();
 
     // Restore state properties from saved data
-    state.level = savedData['level'] as int;
+    state.level = (savedData['level'] as num).toDouble(); 
     state.breadCount = savedData['breadCount'] as double;
 
     // Restore upgrades

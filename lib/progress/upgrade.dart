@@ -78,14 +78,14 @@ class Upgrade {
 
   Map<String, dynamic> toJson() {
     return {
-      'upgradeId': upgradeId,
-      'displayName': displayName,
-      'description': description,
-      'level': level,
-      'cost': cost,
-      'baseEarning': baseEarning,
-      'boostedTimes': boostedTimes,
-      'tapStrengthBoost': tapStrengthBoost,
+      'upgradeId': upgradeId.toString(),
+      'displayName': displayName.toString(),
+      'description': description.toString(),
+      'level': level.toString(),
+      'cost': cost.toString(),
+      'baseEarning': baseEarning.toString(),
+      'boostedTimes': boostedTimes.toString(),
+      'tapStrengthBoost': tapStrengthBoost.toString(),
       'imagePath': imagePath,
     };
   }
